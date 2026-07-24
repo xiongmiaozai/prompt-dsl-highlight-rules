@@ -1,0 +1,895 @@
+# 基础结构正则规则（核心，无词典依赖）
+# 新增格式仅追加节点，无需修改插件代码
+# 包含：提示词语法 + Markdown 语法符号 + 操作标记
+patterns:
+  # ============================================================
+  # 一、提示词语法匹配
+  # ============================================================
+
+  # 顶层章节块：【整体设定】【分镜设计】
+  block_wrapper:
+    regex: '【([^】]+)】'
+    cssClass: "dsl-block-wrapper"
+    captureGroup: 0
+    priority: 30
+
+  # 镜头标题：镜头1（3秒）、镜头3.5（2.5秒）
+  shot_header:
+    regex: '(?:镜头|Shot|shot|SHOT)\s*(\d+)\s*(?:[（(]\s*(\d+(?:-\d+)?\.?\d*\s*(?:秒|s|S|Sec|sec))?(?:\s*[｜|]\s*[^）)]*)?\s*[）)])?'
+    cssClass: "dsl-shot-header"
+    captureGroup: 0
+    priority: 35
+
+  # 资产引用：@图1(安德烈)、@音频1、@图1(安德烈)-参考图服装
+  asset_ref:
+    regex: '@(图\d+|视频\d+|文件\d+|资源\d+|asset\d+|音频\d+)(\([^)]*\))?(-[^\s，。、,.)）\]]+)?'
+    cssClass: "dsl-asset"
+    captureGroup: 0
+    priority: 40
+
+  # 方括号资源引用：[@图1(安德烈)-参考图服装]
+  asset_bracket:
+    regex: '\[(@[^\]]+)\]'
+    cssClass: "dsl-asset-bracket"
+    captureGroup: 0
+    priority: 40
+
+  # 键值参数：色温：、景别：、运镜：
+  param_key:
+    regex: '([\u4e00-\u9fa5]{2,10})(?:\s*[（(][^）)]*[）)])?\s*[：:](?!\s*")'
+    cssClass: "dsl-param-key"
+    captureGroup: 0
+    priority: 45
+
+  # 中文引号台词："..." 「...」
+  dialogue_cn:
+    regex: '[""「]([^""」]+)[""」]'
+    cssClass: "dsl-dialogue"
+    captureGroup: 0
+    priority: 50
+
+  # 英文引号台词（仅匹配 "说：" 后或行首的英文引号内容）
+  dialogue_en:
+    regex: '(?:说[：:]\s*|^[ \t]*|,\s*)"([^"\n]+)"'
+    cssClass: "dsl-dialogue"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+
+  # 约束指令：禁止、排除、杜绝、保证、锁定、不得
+  constraint:
+    regex: '(?:排除|禁止|杜绝|不得|不允许|严禁|避免|切勿|勿要|保证|锁定|仅保留|严格)[^。.\n]*[。.]?'
+    cssClass: "dsl-constraint"
+    captureGroup: 0
+    priority: 55
+
+  # 技术参数：色温 3200K、时长 3秒、分辨率 1920x1080
+  tech_param:
+    regex: '\d{3,5}K|\d+\.?\d*\s*(?:秒|s|S)|\d{3,4}\s*[x×]\s*\d{3,4}|[48]K'
+    cssClass: "dsl-tech-param"
+    captureGroup: 0
+    priority: 45
+
+  # 括号注释：（粗俗、戏谑）（气场示威）
+  parenthetical:
+    regex: '（([^）]+)）'
+    cssClass: "dsl-parenthetical"
+    captureGroup: 0
+    priority: 25
+
+  # 变量占位符：{{variable}} ${variable} <|variable|>
+  variable:
+    regex: '\{\{([^}]+)\}\}|\$\{([^}]+)\}|<\|([^|]+)\|>'
+    cssClass: "dsl-variable"
+    captureGroup: 0
+    priority: 20
+
+  # 角色标签：<system> <user> <assistant> <tool>
+  role_tag:
+    regex: '<\/?(?:system|user|assistant|tool)>'
+    cssClass: "dsl-role-tag"
+    captureGroup: 0
+    priority: 50
+    flags: 'gi'
+
+  # 指令标记：[INST] [/INST] [SYS]
+  instruction:
+    regex: '\[\/?(?:INST|SYS)\]'
+    cssClass: "dsl-instruction"
+    captureGroup: 0
+    priority: 50
+    flags: 'gi'
+
+  # SD权重标记：(text:1.3)
+  emphasis_weight:
+    regex: '\(([^()]+):(\d+\.?\d*)\)'
+    cssClass: "dsl-emphasis-weight"
+    captureGroup: 0
+    priority: 42
+
+  # Lora/模型引用：<lora:name:0.8>
+  lora_ref:
+    regex: '<(?:lora|model|lyco|embedding|hypernet):[^:>]+(?::\d+\.?\d*)?>'
+    cssClass: "dsl-lora-ref"
+    captureGroup: 0
+    priority: 48
+    flags: 'gi'
+
+  # 多重圆括号强调：((text)) (((text)))
+  bracket_strong:
+    regex: '(\({2,})([^()]+)(\){2,})'
+    cssClass: "dsl-bracket-strong"
+    captureGroup: 0
+    priority: 38
+
+  # 方括号弱化：[text]
+  bracket_weak:
+    regex: '\[([a-zA-Z\u4e00-\u9fa5][^\[\]]{1,30})\]'
+    cssClass: "dsl-bracket-weak"
+    captureGroup: 0
+    priority: 22
+
+  # 质量标签：masterpiece, best quality
+  quality_tag:
+    regex: '\b(?:masterpiece|best quality|high quality|ultra detailed|highly detailed|extremely detailed|8k|4k|highres|absurdres|original|amazing quality|very aesthetic|aesthetic)\b'
+    cssClass: "dsl-quality-tag"
+    captureGroup: 0
+    priority: 46
+    flags: 'gi'
+
+  # SD负面提示词头：Negative prompt:
+  sd_negative_header:
+    regex: '^(?:Negative prompt|负面提示词|负面提示)\s*[：:]\s*'
+    cssClass: "dsl-sd-negative-header"
+    captureGroup: 0
+    priority: 55
+    flags: 'gmi'
+    blockLevel: true
+
+  # 音频引用：@音频1 @音频2
+  audio_ref:
+    regex: '@音频\s*\d+'
+    cssClass: "dsl-audio-ref"
+    captureGroup: 0
+    priority: 40
+
+  # 音色标签
+  audio_tone:
+    regex: '音色\s*'
+    cssClass: "dsl-audio-tone"
+    captureGroup: 0
+    priority: 40
+
+  # 音效字段标签
+  audio_sfx:
+    regex: '音效[：:]'
+    cssClass: "dsl-audio-sfx"
+    captureGroup: 0
+    priority: 45
+
+  # SD参数：--ar 16:9 --v 6 --style raw
+  sd_parameter:
+    regex: '--(?:ar|v|niji|style|seed|s|w|h|c|chaos|stylize|tile|quality|fast|hd|relax|turbo)\s+\S+'
+    cssClass: "dsl-sd-parameter"
+    captureGroup: 0
+    priority: 48
+    flags: 'gi'
+
+  # ============================================================
+  # 二、Markdown 语法符号匹配
+  # ============================================================
+
+  # Frontmatter 分隔符：行首 ---
+  md_frontmatter:
+    regex: '^---\s*$'
+    cssClass: "dsl-md-frontmatter"
+    captureGroup: 0
+    priority: 60
+    flags: 'gm'
+    blockLevel: true
+
+  # 标题标记：# ## ### #### ##### ######
+  md_heading:
+    regex: '^(#{1,6})\s+(.+)$'
+    cssClass: "dsl-md-heading"
+    captureGroup: 0
+    priority: 58
+    flags: 'gm'
+    blockLevel: true
+
+  # 粗体标记：**text** __text__
+  md_bold:
+    regex: '\*\*([^*]+)\*\*|__([^_]+)__'
+    cssClass: "dsl-md-bold"
+    captureGroup: 0
+    priority: 52
+
+  # 斜体标记：*text* _text_（避免与粗体冲突）
+  md_italic:
+    regex: '(?<!\*)\*(?!\*)([^*\n]+)\*(?!\*)|(?<!_)_(?!_)([^_\n]+)_(?!_)'
+    cssClass: "dsl-md-italic"
+    captureGroup: 0
+    priority: 51
+
+  # 删除线：~~text~~
+  md_strikethrough:
+    regex: '~~([^~]+)~~'
+    cssClass: "dsl-md-strikethrough"
+    captureGroup: 0
+    priority: 52
+
+  # 代码块围栏：```language
+  md_code_fence:
+    regex: '^```[^\n]*$'
+    cssClass: "dsl-md-code-fence"
+    captureGroup: 0
+    priority: 60
+    flags: 'gm'
+    blockLevel: true
+
+  # 行内代码：`code`
+  md_inline_code:
+    regex: '`([^`\n]+)`'
+    cssClass: "dsl-md-inline-code"
+    captureGroup: 0
+    priority: 53
+
+  # 链接：[text](url)
+  md_link:
+    regex: '\[([^\]]+)\]\(([^)]+)\)'
+    cssClass: "dsl-md-link"
+    captureGroup: 0
+    priority: 54
+
+  # 图片：![alt](url)
+  md_image:
+    regex: '!\[([^\]]*)\]\(([^)]+)\)'
+    cssClass: "dsl-md-image"
+    captureGroup: 0
+    priority: 55
+
+  # Wiki 链接：[[text]] 或 [[text|alias]]
+  md_wiki_link:
+    regex: '\[\[([^\]]+)(?:\|[^\]]+)?\]\]'
+    cssClass: "dsl-md-wiki-link"
+    captureGroup: 0
+    priority: 56
+
+  # 标签：#tag（非标题行的行首或空格后）
+  md_tag:
+    regex: '(?:^|\s)(#[a-zA-Z\u4e00-\u9fa5][\w/\u4e00-\u9fa5-]*)'
+    cssClass: "dsl-md-tag"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+
+  # 任务列表标记：- [ ] 或 - [x]
+  md_task_list:
+    regex: '^(\s*[-*+]\s+\[)[xX ](\])'
+    cssClass: "dsl-md-task"
+    captureGroup: 0
+    priority: 57
+    flags: 'gm'
+
+  # 脚注引用：[^1]
+  md_footnote_ref:
+    regex: '\[\^([^\]]+)\]'
+    cssClass: "dsl-md-footnote"
+    captureGroup: 0
+    priority: 54
+
+  # 脚注定义：[^1]:
+  md_footnote_def:
+    regex: '^\[\^([^\]]+)\]:\s*(.*)$'
+    cssClass: "dsl-md-footnote-def"
+    captureGroup: 0
+    priority: 57
+    flags: 'gm'
+
+  # 数学公式块：$$ ... $$
+  md_math_block:
+    regex: '^\$\$'
+    cssClass: "dsl-md-math"
+    captureGroup: 0
+    priority: 60
+    flags: 'gm'
+    blockLevel: true
+
+  # 行内数学公式：$...$
+  md_math_inline:
+    regex: '(?<!\$)\$(?!\$)([^\$\n]+)\$(?!\$)'
+    cssClass: "dsl-md-math-inline"
+    captureGroup: 0
+    priority: 53
+
+  # 引用块：> text
+  md_blockquote:
+    regex: '^>\s*(.*)$'
+    cssClass: "dsl-md-blockquote"
+    captureGroup: 0
+    priority: 55
+    flags: 'gm'
+    blockLevel: true
+
+  # Callout 块：> [!note]
+  md_callout:
+    regex: '^>\s*\[!(\w+)\]'
+    cssClass: "dsl-md-callout"
+    captureGroup: 0
+    priority: 60
+    flags: 'gmi'
+    blockLevel: true
+
+  # 水平分割线：--- *** ___
+  md_hr:
+    regex: '^(?:-{3,}|\*{3,}|_{3,})\s*$'
+    cssClass: "dsl-md-hr"
+    captureGroup: 0
+    priority: 56
+    flags: 'gm'
+    blockLevel: true
+
+  # 表格分隔行：| --- | --- |
+  md_table_sep:
+    regex: '^\|?[\s-:|]+\|[\s-:|]+\|?\s*$'
+    cssClass: "dsl-md-table-sep"
+    captureGroup: 0
+    priority: 58
+    flags: 'gm'
+    blockLevel: true
+
+  # 表格行：| cell | cell |
+  md_table_row:
+    regex: '^\|.*\|\s*$'
+    cssClass: "dsl-md-table-row"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+    blockLevel: true
+
+  # 列表项：- * + 1.
+  md_list_item:
+    regex: '^(\s*)([-*+]|\d+\.)\s+'
+    cssClass: "dsl-md-list-item"
+    captureGroup: 0
+    priority: 49
+    flags: 'gm'
+    blockLevel: true
+
+  # 定义列表标记：: 术语
+  md_definition:
+    regex: '^:\s+'
+    cssClass: "dsl-md-definition"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+
+  # 块引用 ID：^block-id
+  md_block_id:
+    regex: '\^([a-zA-Z0-9][\w-]*)\s*$'
+    cssClass: "dsl-md-block-id"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+
+  # Obsidian 注释：%% ... %%
+  md_comment:
+    regex: '%%[\s\S]*?%%'
+    cssClass: "dsl-md-comment"
+    captureGroup: 0
+    priority: 54
+    flags: 'g'
+
+  # Emoji 短码：:emoji:
+  md_emoji_shortcode:
+    regex: ':([a-z_]+):'
+    cssClass: "dsl-md-emoji"
+    captureGroup: 0
+    priority: 48
+
+  # 高亮标记：==text==
+  md_highlight:
+    regex: '==([^=]+)=='
+    cssClass: "dsl-md-highlight"
+    captureGroup: 0
+    priority: 52
+
+  # 键值对（YAML/JSON frontmatter）：key: value
+  md_yaml_key:
+    regex: '^([a-zA-Z_][\w-]*)\s*:\s*(.*)$'
+    cssClass: "dsl-md-yaml-key"
+    captureGroup: 0
+    priority: 47
+    flags: 'gm'
+
+  # ============================================================
+  # 三、操作档案标记
+  # ============================================================
+
+  # 时间戳：2026-07-24、2026/07/24、07:30:00
+  timestamp:
+    regex: '\d{4}[-/]\d{1,2}[-/]\d{1,2}(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?|\d{1,2}:\d{2}(?::\d{2})?'
+    cssClass: "dsl-timestamp"
+    captureGroup: 0
+    priority: 42
+
+  # 版本号：v1.0.0、version 2.3
+  version_number:
+    regex: '(?:v|version\s+)?\d+\.\d+(?:\.\d+)?(?:-[a-zA-Z0-9]+)?'
+    cssClass: "dsl-version-number"
+    captureGroup: 0
+    priority: 42
+    flags: 'gi'
+
+  # URL 链接
+  url_link:
+    regex: 'https?://[^\s<>"'')\]]+'
+    cssClass: "dsl-url-link"
+    captureGroup: 0
+    priority: 44
+
+  # 文件路径
+  file_path:
+    regex: '(?:\.?\/)?(?:[\w.-]+\/)+[\w.-]+(?:\.\w+)?'
+    cssClass: "dsl-file-path"
+    captureGroup: 0
+    priority: 40
+
+  # 命令行指令：以 > 或 $ 开头
+  cli_command:
+    regex: '^[>$#]\s+(.+)'
+    cssClass: "dsl-cli-command"
+    captureGroup: 0
+    priority: 48
+    flags: 'gm'
+    blockLevel: true
+
+  # 键盘快捷键：<kbd>Ctrl+C</kbd>
+  kbd_tag:
+    regex: '<kbd>([^<]+)</kbd>'
+    cssClass: "dsl-kbd-tag"
+    captureGroup: 0
+    priority: 54
+    flags: 'gi'
+
+  # HTML 标签：<tag>...</tag>
+  html_tag:
+    regex: '<\/?[a-zA-Z][^>]*>'
+    cssClass: "dsl-html-tag"
+    captureGroup: 0
+    priority: 46
+    flags: 'gi'
+
+  # 键值分隔符：key: value（通用）
+  key_value:
+    regex: '^([a-zA-Z\u4e00-\u9fa5][\w\u4e00-\u9fa5\s]{0,20})[：:]\s*(.+)$'
+    cssClass: "dsl-key-value"
+    captureGroup: 0
+    priority: 30
+    flags: 'gm'
+
+  # 引用标记：> 引用内容
+  reference_marker:
+    regex: '^>{1,}\s+'
+    cssClass: "dsl-reference-marker"
+    captureGroup: 0
+    priority: 48
+    flags: 'gm'
+
+  # 分隔标记：=== 或 ---
+  separator:
+    regex: '^={3,}\s*$'
+    cssClass: "dsl-separator"
+    captureGroup: 0
+    priority: 56
+    flags: 'gm'
+    blockLevel: true
+
+  # ============================================================
+  # 四、AI 工具结构化语法（2025-2026 趋势）
+  # ============================================================
+
+  # ANTML 命名空间标签：Claude 专属标记 <antml:thinking> 等
+  antml_tag:
+    regex: '<\/?antml:[a-z_]+>'
+    cssClass: "dsl-antml-tag"
+    captureGroup: 0
+    priority: 58
+    flags: 'gi'
+
+  # 函数结果块：<function_results> </function_results>
+  function_results_tag:
+    regex: '<\/?function_results>'
+    cssClass: "dsl-function-results"
+    captureGroup: 0
+    priority: 54
+    flags: 'gi'
+
+  # 结构化 XML 标签：<instructions> <context> <example> <output_format> <thinking> <answer>
+  xml_block:
+    regex: '<\/?(?:instructions|context|example|examples|output_format|thinking|answer|input|role|task|reasoning|reflection|critique|summary|steps|solution)>'
+    cssClass: "dsl-xml-block"
+    captureGroup: 0
+    priority: 54
+    flags: 'gi'
+
+  # Chat Template Token：Qwen/Phi <|im_start|> <|im_end|> <|im_sep|>
+  chat_token:
+    regex: '<\|im_(?:start|end|sep)\|>'
+    cssClass: "dsl-chat-token"
+    captureGroup: 0
+    priority: 58
+    flags: 'g'
+
+  # Llama 3 特殊 token：<|begin_of_text|> <|start_header_id|> <|end_header_id|>
+  llama3_token:
+    regex: '<\|(?:begin_of_text|start_header_id|end_header_id|eot_id|reserved)\|>'
+    cssClass: "dsl-llama-token"
+    captureGroup: 0
+    priority: 58
+    flags: 'g'
+
+  # Gemma 对话标记：<start_of_turn> <end_of_turn>
+  gemma_token:
+    regex: '<\/?start_of_turn>|<\/?end_of_turn>'
+    cssClass: "dsl-gemma-token"
+    captureGroup: 0
+    priority: 58
+    flags: 'gi'
+
+  # Llama 2/Mistral 系统标记：<<SYS>> <</SYS>>
+  llama2_sys:
+    regex: '<<\/?SYS>>'
+    cssClass: "dsl-llama-sys"
+    captureGroup: 0
+    priority: 56
+    flags: 'g'
+
+  # 工作流分隔符：## ##（Dify 物理分隔）
+  workflow_sep:
+    regex: '^#{2}\s+.*$'
+    cssClass: "dsl-workflow-sep"
+    captureGroup: 0
+    priority: 50
+    flags: 'gm'
+    blockLevel: true
+
+  # JSON Schema 关键字：type/properties/required 等
+  json_schema_key:
+    regex: '"(?:type|properties|required|items|enum|const|description|response_format|json_schema|additionalProperties|definitions|\$ref)"'
+    cssClass: "dsl-json-schema-key"
+    captureGroup: 0
+    priority: 46
+    flags: 'g'
+
+  # Jinja2 控制流：{% ... %}
+  jinja_control:
+    regex: '\{%[^%]*%\}'
+    cssClass: "dsl-jinja-control"
+    captureGroup: 0
+    priority: 54
+
+  # 工作流节点标识：node_1、start_node
+  workflow_node:
+    regex: '(?:node|节点)_[a-zA-Z0-9_]+'
+    cssClass: "dsl-workflow-node"
+    captureGroup: 0
+    priority: 44
+
+  # ============================================================
+  # 五、Markdown 扩展语法
+  # ============================================================
+
+  # Mermaid 图表围栏：```mermaid
+  md_mermaid:
+    regex: '^```(?:mermaid|flowchart|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie|gitGraph|mindmap|timeline)\b'
+    cssClass: "dsl-md-mermaid"
+    captureGroup: 0
+    priority: 60
+    flags: 'gmi'
+    blockLevel: true
+
+  # 嵌套引用：>> text
+  md_nested_quote:
+    regex: '^>{2,}\s+'
+    cssClass: "dsl-md-nested-quote"
+    captureGroup: 0
+    priority: 56
+    flags: 'gm'
+    blockLevel: true
+
+  # 锚点链接：[text](#anchor)
+  md_anchor_link:
+    regex: '\[([^\]]+)\]\(#[^)]+\)'
+    cssClass: "dsl-md-anchor-link"
+    captureGroup: 0
+    priority: 55
+
+  # 引用块别名：> [!note]+ 折叠
+  md_callout_meta:
+    regex: '^>\s*\[!\w+\][+-]?'
+    cssClass: "dsl-md-callout-meta"
+    captureGroup: 0
+    priority: 60
+    flags: 'gm'
+    blockLevel: true
+
+  # Admonition：!!! note
+  md_admonition:
+    regex: '^!!!\s+\w+'
+    cssClass: "dsl-md-admonition"
+    captureGroup: 0
+    priority: 60
+    flags: 'gm'
+    blockLevel: true
+
+  # ============================================================
+  # 六、操作档案扩展标记
+  # ============================================================
+
+  # 邮箱地址
+  email:
+    regex: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    cssClass: "dsl-email"
+    captureGroup: 0
+    priority: 44
+
+  # IP 地址（IPv4）
+  ip_address:
+    regex: '\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b'
+    cssClass: "dsl-ip-address"
+    captureGroup: 0
+    priority: 44
+
+  # MAC 地址
+  mac_address:
+    regex: '(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}'
+    cssClass: "dsl-mac-address"
+    captureGroup: 0
+    priority: 44
+
+  # UUID
+  uuid:
+    regex: '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
+    cssClass: "dsl-uuid"
+    captureGroup: 0
+    priority: 44
+
+  # 十六进制颜色值：#FF5733 #fff
+  hex_color:
+    regex: '#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b'
+    cssClass: "dsl-hex-color"
+    captureGroup: 0
+    priority: 46
+
+  # rgb/rgba/hsl 颜色函数
+  css_color_func:
+    regex: '\b(?:rgb|rgba|hsl|hsla)\([^)]+\)'
+    cssClass: "dsl-css-color-func"
+    captureGroup: 0
+    priority: 46
+    flags: 'gi'
+
+  # 地理坐标：经纬度
+  geo_coord:
+    regex: '-?\d{1,3}\.\d{1,6},\s*-?\d{1,3}\.\d{1,6}'
+    cssClass: "dsl-geo-coord"
+    captureGroup: 0
+    priority: 42
+
+  # 货币金额
+  currency:
+    regex: '(?:¥|￥|\$|€|£)\s?\d+(?:,\d{3})*(?:\.\d+)?'
+    cssClass: "dsl-currency"
+    captureGroup: 0
+    priority: 44
+
+  # 百分比
+  percentage:
+    regex: '\d+(?:\.\d+)?\s*%'
+    cssClass: "dsl-percentage"
+    captureGroup: 0
+    priority: 42
+
+  # 度量单位
+  measurement:
+    regex: '\d+(?:\.\d+)?\s*(?:px|em|rem|vw|vh|pt|cm|mm|in|kg|g|km|m\b|°C|°F|°|Hz|MHz|GHz|kHz|ms|fps|dpi|ppi|lpx|pt)\b'
+    cssClass: "dsl-measurement"
+    captureGroup: 0
+    priority: 42
+    flags: 'gi'
+
+  # ============================================================
+  # 七、分镜脚本扩展语法（v2.3.0 新增）
+  # ============================================================
+
+  # 分镜编号：分镜 1-0-6-1、分镜 1-0-6-2（多段连字符编号，v2.3.1 新增）
+  shot_id:
+    regex: '分镜\s*\d+(?:-\d+)+'
+    cssClass: "dsl-shot-id"
+    captureGroup: 0
+    priority: 52
+    flags: 'g'
+
+  # 段落标题：A 段 13s｜描述、B 段 14s｜描述（描述）
+  segment_header:
+    regex: '^[A-Z]\s*段\s*\d+\s*(?:秒|s|S)?\s*[｜|]\s*[^\n]+'
+    cssClass: "dsl-segment-header"
+    captureGroup: 0
+    priority: 56
+    flags: 'gm'
+    blockLevel: true
+
+  # 模块标题：模块 1 方向锁、模块 4 分镜头扩写
+  module_header:
+    regex: '^模块\s*\d+\s+[\u4e00-\u9fa5\w]+'
+    cssClass: "dsl-module-header"
+    captureGroup: 0
+    priority: 55
+    flags: 'gm'
+    blockLevel: true
+
+  # 台词标注：台词 Draven（低哑蛊惑） {{Mixed 4}} ：
+  dialogue_speaker:
+    regex: '台词\s+\S+\s*[（(][^）)]*[）)]\s*(?:\{\{[^}]+\}\}\s*)?[：:]'
+    cssClass: "dsl-dialogue-speaker"
+    captureGroup: 0
+    priority: 50
+
+  # 角色定义：Draven（S 主，高位强势方）：
+  character_def:
+    regex: '^([A-Za-z\u4e00-\u9fa5][\w\u4e00-\u9fa5]{0,20})\s*[（(]([^）)]+)[）)]\s*[：:]'
+    cssClass: "dsl-character-def"
+    captureGroup: 0
+    priority: 48
+    flags: 'gm'
+
+  # 书名号引用：《他是龙》、《水形物语》
+  book_title:
+    regex: '《[^》]+》'
+    cssClass: "dsl-book-title"
+    captureGroup: 0
+    priority: 44
+
+  # 中文序号章节：一、二、三、
+  cn_chapter:
+    regex: '^[一二三四五六七八九十百千]+、'
+    cssClass: "dsl-cn-chapter"
+    captureGroup: 0
+    priority: 54
+    flags: 'gm'
+
+  # 时间范围：0-4s、4-9s、0-13s
+  time_range:
+    regex: '\b\d+-\d+\s*(?:秒|s|S)\b'
+    cssClass: "dsl-time-range"
+    captureGroup: 0
+    priority: 46
+
+  # 段落小标题：本段调度说明、全局约束
+  section_note:
+    regex: '^(?:本段|全局)[\u4e00-\u9fa5]{2,12}$'
+    cssClass: "dsl-section-note"
+    captureGroup: 0
+    priority: 52
+    flags: 'gm'
+    blockLevel: true
+
+  # ============================================================
+  # 八、AI 多模态扩展语法（v2.4.0 新增）
+  # ============================================================
+
+  # SSML 语音合成标签：<prosody rate="slow">、<emphasis>、<break time="1s">、<voice>、<say-as>
+  ssml_tag:
+    regex: '<\/?(?:prosody|emphasis|break|voice|say-as|speak|phoneme|sub|p|s|audio|mark|emphasis|lang|token|w)(?:\s+[^>]*)?>'
+    cssClass: "dsl-ssml-tag"
+    captureGroup: 0
+    priority: 56
+    flags: 'gi'
+
+  # 歌词段落标签：[Verse] [Chorus] [Bridge] [Outro] [Intro] [Hook] [Pre-Chorus] [Instrumental]
+  lyric_section:
+    regex: '\[(?:Verse|Chorus|Bridge|Outro|Intro|Hook|Pre-Chorus|Pre Chorus|Instrumental|Refrain|Interlude|Solo|Drop|Build|Beat Drop|Spoken|Spoken Word|Ad lib|Ad-lib|Vamp|Coda|Post-Chorus|Post Chorus|Tag|Lead In|Lead-In)(?:\s+\d+)?\]'
+    cssClass: "dsl-lyric-section"
+    captureGroup: 0
+    priority: 52
+    flags: 'gi'
+
+  # Suno 风格元标签：[style: pop] [genre: rock] [mood: happy]
+  suno_meta:
+    regex: '\[(?:style|genre|mood|tempo|key|bpm|instrument|vocal|language|voice)\s*[:：]\s*[^\]]+\]'
+    cssClass: "dsl-suno-meta"
+    captureGroup: 0
+    priority: 50
+    flags: 'gi'
+
+  # 数字人/虚拟主播指令标签：[emotion]happy[/emotion] [gesture]wave[/gesture] [pause] [action]smile[/action]
+  avatar_directive:
+    regex: '\[(?:emotion|gesture|action|pause|expression|pose|movement|gaze|blink|head|hand|body|camera|scene|transition)(?:\s+[^\]]*)?\](?:[^\[]*)?\[\/(?:emotion|gesture|action|expression|pose|movement|gaze|blink|head|hand|body|camera|scene|transition)\]|\[(?:pause|blink|nod|shake|wave|smile|frown|wink)\]'
+    cssClass: "dsl-avatar-directive"
+    captureGroup: 0
+    priority: 54
+    flags: 'gi'
+
+  # Excel Copilot 函数：=COPILOT("提示词", A1:A100)
+  copilot_formula:
+    regex: '=(?:COPILOT|AI|GPT|CHATGPT|CLAUDE|GEMINI)\s*\([^)]*\)'
+    cssClass: "dsl-copilot-formula"
+    captureGroup: 0
+    priority: 56
+    flags: 'gi'
+
+  # ReAct Agent 标记：Thought: / Action: / Observation: / Final Answer:
+  react_marker:
+    regex: '^(?:Thought|Action|Observation|Final Answer|Action Input|Question|Answer)\s*[:：]'
+    cssClass: "dsl-react-marker"
+    captureGroup: 0
+    priority: 54
+    flags: 'gmi'
+    blockLevel: true
+
+  # CoT 触发短语：Let's think step by step / 让我们一步步思考
+  cot_trigger:
+    regex: "(?:Let's think|让我们|请|逐步|step[- ]by[- ]step|一步一步|按步骤|think step by step|reason step by step|chain of thought|思维链)[^。.\\n]*"
+    cssClass: "dsl-cot-trigger"
+    captureGroup: 0
+    priority: 48
+    flags: 'gi'
+
+  # AI 模型标识符：gpt-4、claude-3-opus、gemini-pro、dall-e-3、midjourney-v6
+  model_identifier:
+    regex: '\b(?:gpt[- ]?\d(?:\.\d)?(?:\s*(?:turbo|mini|nano))?|claude[- ]?\d(?:\.\d)?(?:\s*(?:opus|sonnet|haiku|instant))?|gemini[- ]?(?:pro|ultra|flash|nano)?|dall[- ]?e[- ]?\d|midjourney[- ]?v\d|stable[- ]?diffusion[- ]?(?:xl|3|2|1)|sora|pika|runway[- ]?gen[- ]?\d|seedance|kling|hunyuan|qwen[- ]?\d|llama[- ]?\d|mistral|mixtral|phi[- ]?\d|gemma[- ]?\d|deepseek|yi[- ]?\d|baichuan|chatglm)\b'
+    cssClass: "dsl-model-identifier"
+    captureGroup: 0
+    priority: 46
+    flags: 'gi'
+
+  # ComfyUI 节点调用：KSampler(...)、CLIPTextEncode(...)、VAEDecode(...)
+  comfyui_node:
+    regex: '\b(?:KSampler|CLIPTextEncode|VAEDecode|VAEEncode|CheckpointLoader|LoadCheckpoint|LoadVAE|LoadLoRA|LoraLoader|ControlNetApply|ControlNetLoader|IPAdapterApply|IPAdapterModelLoader|SaveImage|PreviewImage|LoadImage|UpscaleModelLoader|ESRGANUpscale|LatentUpscale|EmptyLatentImage|VAESave|ModelSamplingDiscrete|SamplerCustom|StableCascade_StageB|StableCascade_StageC|SwarmUI|UltimateSDUpscale|ImpactPack|AnimateDiff|AnimateDiffLoader|Deforum|FrameInterpolator|Reroute|PrimitiveNode|Note|Reroute|Seed|Context|SaveImageWebsocket|PreviewImageWebsocket)\s*\('
+    cssClass: "dsl-comfyui-node"
+    captureGroup: 0
+    priority: 50
+    flags: 'g'
+
+  # Pika 视频参数：--camera pan right、--motion 5、--fps 24
+  pika_parameter:
+    regex: '--(?:camera|motion|fps|duration|aspect|ar|guidance|negative|prompt|strength|seed|loop|canvas|zoom|pan|tilt|rotate)\s+\S+'
+    cssClass: "dsl-pika-parameter"
+    captureGroup: 0
+    priority: 48
+    flags: 'gi'
+
+  # Runway Gen 参数：--prompt、--motion_score、--safety_check
+  runway_parameter:
+    regex: '--(?:prompt|motion_score|safety_check|seed|text_prompt|image_prompt|seconds|fps|resolution|model|style)\s+\S+'
+    cssClass: "dsl-runway-parameter"
+    captureGroup: 0
+    priority: 48
+    flags: 'gi'
+
+  # 翻译任务标记：Source: / Target: / 原文： / 译文：
+  translation_marker:
+    regex: '^(?:Source|Target|原文|译文|源文|Source Text|Target Text|SL|TL)\s*[:：]'
+    cssClass: "dsl-translation-marker"
+    captureGroup: 0
+    priority: 52
+    flags: 'gmi'
+    blockLevel: true
+
+  # Few-shot 示例标记：Example: / 示例： / Q: / A:
+  fewshot_marker:
+    regex: '^(?:Example|示例|例子|案例|样例|Q|A|Question|Answer|Input|Output|输入|输出|问题|回答)\s*[:：]'
+    cssClass: "dsl-fewshot-marker"
+    captureGroup: 0
+    priority: 50
+    flags: 'gmi'
+    blockLevel: true
+
+  # 3D 生成平台标识：[Meshy] [Hunyuan3D] [Rodin] [Genie]
+  gen3d_platform:
+    regex: '\[(?:Meshy|Hunyuan3D|Rodin|Hyper3D|Genie|Shap-E|DreamFusion|3DGen|Tripo3D|Tripo3)\]'
+    cssClass: "dsl-gen3d-platform"
+    captureGroup: 0
+    priority: 50
+    flags: 'gi'

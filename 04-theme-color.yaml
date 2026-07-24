@@ -1,0 +1,1097 @@
+# 动态颜色配置 — 颜色完全由 YAML 驱动，支持无限扩展
+# 工作原理：colors 区定义令牌 → 插件生成 CSS 变量 → styleRules 区引用令牌名
+#
+# 修改颜色步骤：
+# 1. 在 colors 区找到对应令牌
+# 2. 修改 light/dark 值
+# 3. 保存后插件自动重新加载（或重启 Obsidian）
+#
+# 新增颜色步骤：
+# 1. 在 colors 区添加新令牌（如 mycolor: { light: "#ff0000", dark: "#ff5555" }）
+# 2. 在 styleRules 中用令牌名引用（如 color: "mycolor"）
+# 3. 支持 .soft 和 .border 修饰（如 background: "mycolor.soft"）
+
+# ============================================================
+# 颜色定义区 — 定义所有可用的颜色令牌
+# 每个令牌自动生成 3 个 CSS 变量：
+#   --dsl-{name}        → 主色
+#   --dsl-{name}-soft   → 半透明背景（自动计算 6% 透明度）
+#   --dsl-{name}-border → 边框色（自动计算 15% 透明度）
+# ============================================================
+colors:
+  # ---- 基础 10 令牌 ----
+  danger:
+    light: "#ef4444"
+    dark: "#f87171"
+    name: { zh: "红色（排除/禁止）", en: "Red (Exclude)" }
+    desc: { zh: "排除规则、SD 负面提示词头", en: "Exclusion rules, SD negative" }
+  success:
+    light: "#10b981"
+    dark: "#34d399"
+    name: { zh: "绿色（成功/台词）", en: "Green (Success)" }
+    desc: { zh: "台词内容、质量标签", en: "Dialogue, quality tags" }
+  warning:
+    light: "#d97706"
+    dark: "#f59e0b"
+    name: { zh: "黄色（警告/参数）", en: "Yellow (Warning)" }
+    desc: { zh: "技术参数、变量、权重标记", en: "Tech params, variables, weights" }
+  info:
+    light: "#3b82f6"
+    dark: "#60a5fa"
+    name: { zh: "蓝色（信息/标签）", en: "Blue (Info)" }
+    desc: { zh: "字段标签、括号强调", en: "Field labels, bracket emphasis" }
+  purple:
+    light: "#8b5cf6"
+    dark: "#a78bfa"
+    name: { zh: "紫色（区段/指令）", en: "Purple (Section)" }
+    desc: { zh: "区段标记、角色标签、指令标记", en: "Section markers, role tags" }
+  cyan:
+    light: "#0891b2"
+    dark: "#22d3ee"
+    name: { zh: "青色（分镜/运镜）", en: "Cyan (Shot)" }
+    desc: { zh: "分镜标题、镜头运动术语", en: "Shot headers, camera moves" }
+  pink:
+    light: "#db2777"
+    dark: "#f472b6"
+    name: { zh: "粉色（音频）", en: "Pink (Audio)" }
+    desc: { zh: "音频引用、音色标签", en: "Audio references, tone tags" }
+  amber:
+    light: "#b45309"
+    dark: "#d97706"
+    name: { zh: "棕色（资源引用）", en: "Amber (Asset)" }
+    desc: { zh: "资源引用、Lora 模型引用", en: "Asset refs, Lora models" }
+  orange:
+    light: "#ea580c"
+    dark: "#fb923c"
+    name: { zh: "橙色（光效）", en: "Orange (Light)" }
+    desc: { zh: "光效术语", en: "Light effect terms" }
+  paren:
+    light: "#94a3b8"
+    dark: "#94a3b8"
+    name: { zh: "灰色（括号注释）", en: "Gray (Parenthetical)" }
+    desc: { zh: "括号注释、弱化标记", en: "Parenthetical notes, weak markers" }
+
+  # ---- 扩展令牌 ----
+  violet:
+    light: "#7c3aed"
+    dark: "#818cf8"
+    name: { zh: "深紫（ANTML/AI 语法）", en: "Violet (ANTML)" }
+    desc: { zh: "ANTML 标签、AI 工具语法", en: "ANTML tags, AI syntax" }
+  indigo:
+    light: "#6366f1"
+    dark: "#818cf8"
+    name: { zh: "靛蓝（Chat Token）", en: "Indigo (Chat Token)" }
+    desc: { zh: "Chat Template Token", en: "Chat tokens, special markers" }
+  emerald:
+    light: "#059669"
+    dark: "#10b981"
+    name: { zh: "翠绿（Mermaid/命令）", en: "Emerald (Mermaid)" }
+    desc: { zh: "Mermaid 图表、命令行指令", en: "Mermaid diagrams, CLI commands" }
+  slate:
+    light: "#64748b"
+    dark: "#94a3b8"
+    name: { zh: "石板灰（引用/注释）", en: "Slate (Quote)" }
+    desc: { zh: "嵌套引用、Frontmatter", en: "Nested quotes, frontmatter" }
+  darkslate:
+    light: "#1e293b"
+    dark: "#e2e8f0"
+    name: { zh: "深石板（标题）", en: "Dark Slate (Heading)" }
+    desc: { zh: "Markdown 标题", en: "Markdown headings" }
+  blue:
+    light: "#2563eb"
+    dark: "#60a5fa"
+    name: { zh: "蓝色（链接/邮箱）", en: "Blue (Link)" }
+    desc: { zh: "链接、邮箱地址", en: "Links, email addresses" }
+  slategray:
+    light: "#475569"
+    dark: "#94a3b8"
+    name: { zh: "中灰（文件路径/Kbd）", en: "Slate Gray (Path)" }
+    desc: { zh: "文件路径、键盘快捷键", en: "File paths, keyboard shortcuts" }
+  sky:
+    light: "#0284c7"
+    dark: "#0ea5e9"
+    name: { zh: "天蓝（时间戳/地理）", en: "Sky (Timestamp)" }
+    desc: { zh: "时间戳、地理坐标", en: "Timestamps, coordinates" }
+  indigodeep:
+    light: "#4f46e5"
+    dark: "#6366f1"
+    name: { zh: "深靛蓝（构图/法律）", en: "Indigo Deep (Composition)" }
+    desc: { zh: "构图术语、法律术语", en: "Composition, legal terms" }
+  fuchsia:
+    light: "#c026d3"
+    dark: "#e879f9"
+    name: { zh: "品红（音乐/时尚）", en: "Fuchsia (Music)" }
+    desc: { zh: "音乐音频、时尚设计", en: "Music audio, fashion design" }
+  teal:
+    light: "#0d9488"
+    dark: "#2dd4bf"
+    name: { zh: "青绿（数据科学/教育）", en: "Teal (Data)" }
+    desc: { zh: "数据科学、教育学术语", en: "Data science, education terms" }
+  rose:
+    light: "#e11d48"
+    dark: "#fb7185"
+    name: { zh: "玫瑰红（医学）", en: "Rose (Medical)" }
+    desc: { zh: "医学术语", en: "Medical terms" }
+  lime:
+    light: "#65a30d"
+    dark: "#a3e635"
+    name: { zh: "黄绿（地理/农业）", en: "Lime (Geography)" }
+    desc: { zh: "地理/GIS、农业术语", en: "Geography, agriculture terms" }
+  green:
+    light: "#16a34a"
+    dark: "#22c55e"
+    name: { zh: "绿色（化学/生物）", en: "Green (Chemistry)" }
+    desc: { zh: "化学、生物学术语", en: "Chemistry, biology terms" }
+  slatelight:
+    light: "#cbd5e1"
+    dark: "#475569"
+    name: { zh: "浅灰（分割线）", en: "Slate Light (Separator)" }
+    desc: { zh: "水平分割线、表格分隔", en: "Horizontal rules, separators" }
+  yellow:
+    light: "#facc15"
+    dark: "#fde047"
+    name: { zh: "黄色（高亮）", en: "Yellow (Highlight)" }
+    desc: { zh: "高亮标记", en: "Highlight markers" }
+
+  # ---- 分镜脚本扩展令牌（v2.3.0 新增）----
+  segment:
+    light: "#be185d"
+    dark: "#f472b6"
+    name: { zh: "深红（段落标题）", en: "Segment (Header)" }
+    desc: { zh: "分镜段落标题（A 段/B 段）", en: "Shot segment headers" }
+  module:
+    light: "#0e7490"
+    dark: "#22d3ee"
+    name: { zh: "深青（模块标题）", en: "Module (Header)" }
+    desc: { zh: "分镜模块标题（模块 1/2/3）", en: "Shot module headers" }
+  reference:
+    light: "#6d28d9"
+    dark: "#a78bfa"
+    name: { zh: "深紫罗兰（引用）", en: "Reference (Cite)" }
+    desc: { zh: "书名号引用、影视对标", en: "Book titles, references" }
+
+  # ---- v2.4.0 多模态扩展令牌 ----
+  music:
+    light: "#c026d3"
+    dark: "#e879f9"
+    name: { zh: "品红（音乐生成）", en: "Music (Magenta)" }
+    desc: { zh: "Suno 歌词段落、音乐元标签", en: "Suno lyrics, music meta tags" }
+  avatar:
+    light: "#ec4899"
+    dark: "#f472b6"
+    name: { zh: "粉色（数字人）", en: "Avatar (Pink)" }
+    desc: { zh: "数字人情绪、手势指令", en: "Avatar emotion, gesture" }
+  tts:
+    light: "#f97316"
+    dark: "#fb923c"
+    name: { zh: "橙色（语音合成）", en: "TTS (Orange)" }
+    desc: { zh: "SSML 标签、TTS 情绪", en: "SSML tags, TTS emotion" }
+  agent:
+    light: "#7c3aed"
+    dark: "#818cf8"
+    name: { zh: "深紫（Agent）", en: "Agent (Violet)" }
+    desc: { zh: "ReAct 标记、CoT 触发", en: "ReAct markers, CoT triggers" }
+  excel:
+    light: "#059669"
+    dark: "#10b981"
+    name: { zh: "翠绿（Excel AI）", en: "Excel (Emerald)" }
+    desc: { zh: "Copilot 函数、Excel AI", en: "Copilot formulas, Excel AI" }
+  gen3d:
+    light: "#0891b2"
+    dark: "#22d3ee"
+    name: { zh: "青色（3D 生成）", en: "3D Gen (Cyan)" }
+    desc: { zh: "3D 生成平台标识", en: "3D gen platform tags" }
+  comfyui:
+    light: "#0d9488"
+    dark: "#2dd4bf"
+    name: { zh: "青绿（ComfyUI）", en: "ComfyUI (Teal)" }
+    desc: { zh: "ComfyUI 节点调用", en: "ComfyUI node calls" }
+  runway:
+    light: "#6366f1"
+    dark: "#818cf8"
+    name: { zh: "靛蓝（Runway/Pika）", en: "Runway (Indigo)" }
+    desc: { zh: "Runway/Pika 视频参数", en: "Runway/Pika video params" }
+
+# ============================================================
+# 样式规则区 — 每条规则引用颜色令牌名
+# 引用格式：
+#   "danger"         → var(--dsl-danger)
+#   "danger.soft"    → var(--dsl-danger-soft)（半透明背景）
+#   "danger.border"  → var(--dsl-danger-border)（边框色）
+#   "1px solid danger.border" → 1px solid var(--dsl-danger-border)
+# ============================================================
+styleRules:
+  # ============================================================
+  # 一、基础结构
+  # ============================================================
+  dsl-block-wrapper:
+    color: "purple"
+    fontWeight: "bold"
+    background: "purple.soft"
+    border: "1px solid purple.border"
+    borderRadius: "8px"
+    padding: "1px 12px"
+
+  dsl-shot-header:
+    color: "cyan"
+    fontWeight: "bold"
+
+  dsl-asset:
+    color: "amber"
+    fontWeight: "600"
+
+  dsl-asset-bracket:
+    color: "amber"
+    fontWeight: "500"
+
+  dsl-param-key:
+    color: "info"
+    fontWeight: "600"
+
+  dsl-dialogue:
+    color: "success"
+    fontStyle: "italic"
+    background: "success.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-constraint:
+    color: "danger"
+    fontWeight: "600"
+    background: "danger.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-tech-param:
+    color: "warning"
+    fontWeight: "600"
+
+  dsl-parenthetical:
+    color: "paren"
+    fontStyle: "italic"
+    opacity: "0.70"
+
+  dsl-variable:
+    color: "warning"
+    fontWeight: "600"
+
+  dsl-role-tag:
+    color: "purple"
+    fontWeight: "bold"
+
+  dsl-instruction:
+    color: "purple"
+    fontWeight: "bold"
+
+  # ============================================================
+  # 二、SD/ComfyUI 扩展
+  # ============================================================
+  dsl-emphasis-weight:
+    color: "warning"
+    fontWeight: "600"
+    background: "warning.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-lora-ref:
+    color: "amber"
+    fontWeight: "bold"
+    background: "amber.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-bracket-strong:
+    color: "info"
+    fontWeight: "bold"
+
+  dsl-bracket-weak:
+    color: "paren"
+    opacity: "0.75"
+
+  dsl-quality-tag:
+    color: "success"
+    fontWeight: "600"
+
+  dsl-sd-negative-header:
+    color: "danger"
+    fontWeight: "bold"
+    background: "danger.soft"
+    borderLeft: "3px solid danger"
+    paddingLeft: "12px"
+    borderRadius: "0 4px 4px 0"
+
+  # SD 参数标记：--ar 16:9 --v 6
+  dsl-sd-parameter:
+    color: "violet"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "violet.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 音频相关
+  dsl-audio-ref:
+    color: "pink"
+    fontWeight: "600"
+
+  dsl-audio-tone:
+    color: "pink"
+    fontWeight: "500"
+    fontStyle: "italic"
+
+  dsl-audio-sfx:
+    color: "pink"
+    fontWeight: "600"
+
+  # ============================================================
+  # 三、AI 工具结构化语法（2025-2026 趋势，紫蓝科技系）
+  # ============================================================
+  # ANTML 命名空间标签（最高优先级强调）
+  dsl-antml-tag:
+    color: "violet"
+    fontWeight: "bold"
+    background: "violet.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-function-results:
+    color: "purple"
+    fontWeight: "600"
+    background: "purple.soft"
+    borderRadius: "4px"
+
+  dsl-xml-block:
+    color: "purple"
+    fontWeight: "600"
+
+  dsl-chat-token:
+    color: "indigo"
+    fontWeight: "bold"
+
+  dsl-llama-token:
+    color: "indigo"
+    fontWeight: "bold"
+
+  dsl-gemma-token:
+    color: "info"
+    fontWeight: "bold"
+
+  dsl-llama-sys:
+    color: "purple"
+    fontWeight: "bold"
+
+  dsl-workflow-sep:
+    color: "paren"
+    fontWeight: "600"
+    fontStyle: "italic"
+
+  dsl-json-schema-key:
+    color: "warning"
+    fontWeight: "600"
+
+  dsl-jinja-control:
+    color: "purple"
+    fontWeight: "600"
+    background: "purple.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  dsl-workflow-node:
+    color: "cyan"
+    fontWeight: "600"
+
+  # ============================================================
+  # 四、Markdown 扩展语法
+  # ============================================================
+  dsl-md-mermaid:
+    color: "emerald"
+    fontWeight: "bold"
+    background: "emerald.soft"
+    borderRadius: "4px"
+
+  dsl-md-nested-quote:
+    color: "slate"
+    fontStyle: "italic"
+
+  dsl-md-anchor-link:
+    color: "info"
+    fontWeight: "500"
+    textDecoration: "underline dotted"
+
+  dsl-md-callout-meta:
+    color: "warning"
+    fontWeight: "bold"
+    background: "warning.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  dsl-md-admonition:
+    color: "warning"
+    fontWeight: "bold"
+    background: "warning.soft"
+    borderRadius: "4px"
+
+  # ============================================================
+  # 四-B、基础 Markdown 语法
+  # ============================================================
+  # Frontmatter 分隔符
+  dsl-md-frontmatter:
+    color: "slate"
+    fontWeight: "bold"
+    opacity: "0.60"
+
+  # 标题标记
+  dsl-md-heading:
+    color: "darkslate"
+    fontWeight: "bold"
+
+  # 粗体
+  dsl-md-bold:
+    fontWeight: "bold"
+
+  # 斜体
+  dsl-md-italic:
+    fontStyle: "italic"
+
+  # 删除线
+  dsl-md-strikethrough:
+    color: "paren"
+    textDecoration: "line-through"
+
+  # 代码块围栏
+  dsl-md-code-fence:
+    color: "slate"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "slate.soft"
+    borderRadius: "4px"
+
+  # 行内代码
+  dsl-md-inline-code:
+    color: "pink"
+    fontFamily: "monospace"
+    background: "pink.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 链接
+  dsl-md-link:
+    color: "blue"
+    textDecoration: "underline"
+
+  # 图片
+  dsl-md-image:
+    color: "cyan"
+    fontWeight: "500"
+
+  # Wiki 链接
+  dsl-md-wiki-link:
+    color: "blue"
+    fontWeight: "500"
+
+  # 标签 #tag
+  dsl-md-tag:
+    color: "violet"
+    fontWeight: "500"
+
+  # 任务列表标记
+  dsl-md-task:
+    color: "emerald"
+    fontWeight: "bold"
+
+  # 脚注引用
+  dsl-md-footnote:
+    color: "indigo"
+    fontWeight: "500"
+    fontSize: "0.85em"
+
+  # 脚注定义
+  dsl-md-footnote-def:
+    color: "indigo"
+    fontWeight: "600"
+
+  # 数学公式块
+  dsl-md-math:
+    color: "violet"
+    fontWeight: "bold"
+
+  # 行内数学公式
+  dsl-md-math-inline:
+    color: "violet"
+
+  # 引用块
+  dsl-md-blockquote:
+    color: "slate"
+    fontStyle: "italic"
+    borderLeft: "3px solid slate.border"
+    paddingLeft: "12px"
+
+  # Callout 块
+  dsl-md-callout:
+    color: "warning"
+    fontWeight: "bold"
+    background: "warning.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 水平分割线
+  dsl-md-hr:
+    color: "slatelight"
+    opacity: "0.50"
+
+  # 表格分隔行
+  dsl-md-table-sep:
+    color: "paren"
+    fontFamily: "monospace"
+
+  # 表格行
+  dsl-md-table-row:
+    color: "slategray"
+    fontFamily: "monospace"
+
+  # 列表项
+  dsl-md-list-item:
+    color: "slate"
+    fontWeight: "600"
+
+  # 定义列表
+  dsl-md-definition:
+    color: "cyan"
+    fontWeight: "500"
+
+  # 块引用 ID
+  dsl-md-block-id:
+    color: "paren"
+    fontFamily: "monospace"
+    fontSize: "0.85em"
+
+  # Obsidian 注释
+  dsl-md-comment:
+    color: "paren"
+    fontStyle: "italic"
+    opacity: "0.50"
+
+  # Emoji 短码
+  dsl-md-emoji:
+    color: "emerald"
+
+  # 高亮标记
+  dsl-md-highlight:
+    background: "yellow.soft"
+    borderRadius: "3px"
+    padding: "0 2px"
+
+  # YAML/JSON 键值
+  dsl-md-yaml-key:
+    color: "warning"
+    fontWeight: "600"
+
+  # ============================================================
+  # 五、操作档案扩展标记
+  # ============================================================
+  dsl-email:
+    color: "blue"
+    fontWeight: "500"
+
+  dsl-ip-address:
+    color: "cyan"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  dsl-mac-address:
+    color: "cyan"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  dsl-uuid:
+    color: "slate"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  dsl-hex-color:
+    color: "warning"
+    fontWeight: "600"
+    fontFamily: "monospace"
+
+  dsl-css-color-func:
+    color: "warning"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  dsl-geo-coord:
+    color: "cyan"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  dsl-currency:
+    color: "emerald"
+    fontWeight: "600"
+
+  dsl-percentage:
+    color: "warning"
+    fontWeight: "600"
+
+  dsl-measurement:
+    color: "warning"
+    fontWeight: "500"
+
+  # ============================================================
+  # 五-B、基础操作档案标记
+  # ============================================================
+  # 时间戳
+  dsl-timestamp:
+    color: "sky"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  # 版本号
+  dsl-version-number:
+    color: "violet"
+    fontWeight: "600"
+    fontFamily: "monospace"
+
+  # URL 链接
+  dsl-url-link:
+    color: "blue"
+    textDecoration: "underline"
+
+  # 文件路径
+  dsl-file-path:
+    color: "slategray"
+    fontFamily: "monospace"
+    background: "slategray.soft"
+    borderRadius: "3px"
+    padding: "0 2px"
+
+  # 命令行指令
+  dsl-cli-command:
+    color: "emerald"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "emerald.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 键盘快捷键
+  dsl-kbd-tag:
+    color: "slategray"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "slategray.soft"
+    borderRadius: "4px"
+    padding: "1px 6px"
+    border: "1px solid slategray.border"
+
+  # HTML 标签
+  dsl-html-tag:
+    color: "purple"
+    fontWeight: "500"
+    fontFamily: "monospace"
+
+  # 键值分隔符
+  dsl-key-value:
+    color: "warning"
+    fontWeight: "500"
+
+  # 引用标记
+  dsl-reference-marker:
+    color: "slate"
+    fontWeight: "600"
+
+  # 分隔标记
+  dsl-separator:
+    color: "slatelight"
+    opacity: "0.50"
+
+  # ============================================================
+  # 六、词典精细化着色（按行业色相分区）
+  # ============================================================
+  # 镜头运动 - 青色系
+  dsl-camera-word:
+    color: "cyan"
+    fontWeight: "600"
+
+  # 光影 - 橙色系
+  dsl-light-word:
+    color: "orange"
+    fontWeight: "500"
+
+  # 情绪 - 紫色系
+  dsl-emotion-word:
+    color: "purple"
+    fontStyle: "italic"
+
+  # 转场 - 紫色系
+  dsl-scene-transition:
+    color: "purple"
+    fontWeight: "600"
+    background: "purple.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # AI/机器学习 - 紫色科技系
+  dsl-ai-ml-term:
+    color: "purple"
+    fontWeight: "600"
+
+  # SD/图像生成 - 青色系
+  dsl-sd-image-term:
+    color: "cyan"
+    fontWeight: "600"
+
+  # 摄影 - 蓝色系
+  dsl-photography-term:
+    color: "blue"
+    fontWeight: "600"
+
+  # 艺术风格 - 粉色系
+  dsl-art-style:
+    color: "pink"
+    fontWeight: "500"
+    fontStyle: "italic"
+
+  # 色彩理论 - 橙色系
+  dsl-color-term:
+    color: "orange"
+    fontWeight: "500"
+
+  # 构图 - 靛蓝系
+  dsl-composition-term:
+    color: "indigodeep"
+    fontWeight: "500"
+
+  # 音乐音频 - 紫红系
+  dsl-music-audio-term:
+    color: "fuchsia"
+    fontWeight: "500"
+
+  # 编程 - 绿色系
+  dsl-programming-term:
+    color: "emerald"
+    fontWeight: "600"
+    fontFamily: "monospace"
+
+  # 数据科学 - 青绿系
+  dsl-data-science-term:
+    color: "teal"
+    fontWeight: "600"
+
+  # 叙事写作 - 琥珀系
+  dsl-narrative-term:
+    color: "warning"
+    fontWeight: "500"
+    fontStyle: "italic"
+
+  # 营销 - 红色系
+  dsl-marketing-term:
+    color: "danger"
+    fontWeight: "600"
+
+  # 游戏开发 - 紫色系
+  dsl-game-dev-term:
+    color: "violet"
+    fontWeight: "600"
+
+  # 质量标签 - 绿色系
+  dsl-quality-tag-ext:
+    color: "success"
+    fontWeight: "600"
+
+  # 负面标签 - 红色系
+  dsl-negative-tag:
+    color: "danger"
+    fontWeight: "500"
+    opacity: "0.85"
+
+  # 医学 - 玫红系
+  dsl-medical-term:
+    color: "rose"
+    fontWeight: "500"
+
+  # 法律 - 靛蓝系
+  dsl-legal-term:
+    color: "indigodeep"
+    fontWeight: "600"
+
+  # 金融 - 翠绿系
+  dsl-finance-term:
+    color: "emerald"
+    fontWeight: "600"
+
+  # 建筑 - 石板灰系
+  dsl-architecture-term:
+    color: "slategray"
+    fontWeight: "500"
+
+  # 时尚 - 粉紫系
+  dsl-fashion-term:
+    color: "fuchsia"
+    fontWeight: "500"
+    fontStyle: "italic"
+
+  # 美食烹饪 - 橙红系
+  dsl-food-term:
+    color: "orange"
+    fontWeight: "500"
+
+  # 物理科学 - 靛紫系
+  dsl-physics-term:
+    color: "indigo"
+    fontWeight: "500"
+
+  # ============================================================
+  # 七、扩展行业词典（新增 14 个领域）
+  # ============================================================
+  # UI/UX 设计 - 蓝色系
+  dsl-ui-ux-term:
+    color: "blue"
+    fontWeight: "600"
+
+  # 3D建模/CG - 青色系
+  dsl-cg-term:
+    color: "cyan"
+    fontWeight: "600"
+
+  # 影视后期/VFX - 紫色系
+  dsl-vfx-term:
+    color: "violet"
+    fontWeight: "600"
+
+  # 动效设计 - 粉色系
+  dsl-motion-term:
+    color: "pink"
+    fontWeight: "500"
+
+  # 电商运营 - 橙色系
+  dsl-ecommerce-term:
+    color: "orange"
+    fontWeight: "600"
+
+  # 教育学 - 蓝绿系
+  dsl-education-term:
+    color: "teal"
+    fontWeight: "500"
+
+  # 心理学 - 紫色系
+  dsl-psychology-term:
+    color: "purple"
+    fontWeight: "500"
+    fontStyle: "italic"
+
+  # 化学 - 绿色系
+  dsl-chemistry-term:
+    color: "green"
+    fontWeight: "500"
+
+  # 生物学 - 翠绿系
+  dsl-biology-term:
+    color: "emerald"
+    fontWeight: "500"
+
+  # 地理/GIS - 黄绿系
+  dsl-geography-term:
+    color: "lime"
+    fontWeight: "500"
+
+  # 航空航天 - 天蓝系
+  dsl-aerospace-term:
+    color: "sky"
+    fontWeight: "600"
+
+  # 军事 - 暗灰系
+  dsl-military-term:
+    color: "slategray"
+    fontWeight: "600"
+
+  # 体育/运动科学 - 橙色系
+  dsl-sports-term:
+    color: "orange"
+    fontWeight: "500"
+
+  # 农业 - 草绿系
+  dsl-agriculture-term:
+    color: "green"
+    fontWeight: "500"
+
+  # ============================================================
+  # 八、分镜脚本扩展样式（v2.3.0 新增）
+  # ============================================================
+  dsl-segment-header:
+    color: "segment"
+    fontWeight: "bold"
+    fontSize: "1.1em"
+  dsl-module-header:
+    color: "module"
+    fontWeight: "bold"
+  dsl-dialogue-speaker:
+    color: "info"
+    fontWeight: "bold"
+  dsl-character-def:
+    color: "purple"
+    fontWeight: "bold"
+  dsl-book-title:
+    color: "reference"
+    fontStyle: "italic"
+  dsl-cn-chapter:
+    color: "darkslate"
+    fontWeight: "bold"
+    fontSize: "1.15em"
+  dsl-time-range:
+    color: "warning"
+  dsl-section-note:
+    color: "slate"
+    fontWeight: "bold"
+  dsl-lexicon-blocking:
+    color: "indigodeep"
+  dsl-lexicon-camera-fixed:
+    color: "cyan"
+  dsl-lexicon-shot-size:
+    color: "cyan"
+
+  # ============================================================
+  # 九、分镜脚本扩展样式（v2.3.1 新增）
+  # ============================================================
+  dsl-shot-id:
+    color: "cyan"
+    fontWeight: "bold"
+  dsl-lexicon-focal-length:
+    color: "orange"
+  dsl-lexicon-performance:
+    color: "pink"
+
+  # ============================================================
+  # 十、AI 多模态扩展样式（v2.4.0 新增）
+  # ============================================================
+  # SSML 语音合成标签
+  dsl-ssml-tag:
+    color: "tts"
+    fontWeight: "bold"
+    background: "tts.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # 歌词段落标签 [Verse] [Chorus]
+  dsl-lyric-section:
+    color: "music"
+    fontWeight: "bold"
+    background: "music.soft"
+    borderRadius: "4px"
+    padding: "0 6px"
+
+  # Suno 风格元标签 [style: pop]
+  dsl-suno-meta:
+    color: "music"
+    fontWeight: "600"
+    background: "music.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 数字人指令标签 [emotion]happy[/emotion]
+  dsl-avatar-directive:
+    color: "avatar"
+    fontWeight: "bold"
+    background: "avatar.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # Excel Copilot 函数 =COPILOT(...)
+  dsl-copilot-formula:
+    color: "excel"
+    fontWeight: "bold"
+    fontFamily: "monospace"
+    background: "excel.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # ReAct Agent 标记 Thought: / Action:
+  dsl-react-marker:
+    color: "agent"
+    fontWeight: "bold"
+    background: "agent.soft"
+    borderRadius: "4px"
+    padding: "0 6px"
+
+  # CoT 触发短语
+  dsl-cot-trigger:
+    color: "agent"
+    fontWeight: "600"
+    fontStyle: "italic"
+    background: "agent.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # AI 模型标识符 gpt-4、claude-3
+  dsl-model-identifier:
+    color: "violet"
+    fontWeight: "600"
+    fontFamily: "monospace"
+
+  # ComfyUI 节点调用 KSampler(...)
+  dsl-comfyui-node:
+    color: "comfyui"
+    fontWeight: "bold"
+    fontFamily: "monospace"
+    background: "comfyui.soft"
+    borderRadius: "4px"
+    padding: "0 3px"
+
+  # Pika 视频参数 --camera
+  dsl-pika-parameter:
+    color: "runway"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "runway.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # Runway Gen 参数
+  dsl-runway-parameter:
+    color: "runway"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "runway.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 翻译任务标记 Source: / Target:
+  dsl-translation-marker:
+    color: "purple"
+    fontWeight: "bold"
+
+  # Few-shot 示例标记 Example: / Q:
+  dsl-fewshot-marker:
+    color: "purple"
+    fontWeight: "600"
+    background: "purple.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 3D 生成平台标识 [Meshy] [Hunyuan3D]
+  dsl-gen3d-platform:
+    color: "gen3d"
+    fontWeight: "bold"
+    background: "gen3d.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # v2.4.0 词典扩展样式
+  dsl-lexicon-music-structure:
+    color: "music"
+    fontWeight: "600"
+  dsl-lexicon-avatar-emotion:
+    color: "avatar"
+    fontWeight: "500"
+  dsl-lexicon-avatar-gesture:
+    color: "avatar"
+    fontWeight: "500"
+    fontStyle: "italic"
+  dsl-lexicon-tts-emotion:
+    color: "tts"
+    fontWeight: "500"
+  dsl-lexicon-interior-style:
+    color: "slategray"
+    fontWeight: "500"
+    fontStyle: "italic"
+  dsl-lexicon-logo-style:
+    color: "indigodeep"
+    fontWeight: "500"

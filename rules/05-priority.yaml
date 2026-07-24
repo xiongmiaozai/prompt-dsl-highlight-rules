@@ -1,0 +1,21 @@
+# 优先级控制（解决多层高亮覆盖冲突）
+# 数值越大渲染越晚、优先级越高，自动覆盖低层样式
+
+priority:
+  # 原生 Markdown 语法（最低层，由 Obsidian 处理）
+  native-markdown: 10
+
+  # 基础结构正则匹配
+  base-pattern: 30
+
+  # 上下文语义过滤后的匹配
+  semantic-context: 60
+
+  # 词典关键词精细化着色（最高层）
+  lexicon-keyword: 80
+
+# 默认优先级（当 pattern 未指定 priority 时使用）
+defaultPatternPriority: 30
+
+# 词典优先级固定为最高
+lexiconPriority: 80
