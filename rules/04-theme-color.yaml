@@ -170,6 +170,48 @@ colors:
     name: { zh: "深紫罗兰（引用）", en: "Reference (Cite)" }
     desc: { zh: "书名号引用、影视对标", en: "Book titles, references" }
 
+  # ---- v2.4.0 多模态扩展令牌 ----
+  music:
+    light: "#c026d3"
+    dark: "#e879f9"
+    name: { zh: "品红（音乐生成）", en: "Music (Magenta)" }
+    desc: { zh: "Suno 歌词段落、音乐元标签", en: "Suno lyrics, music meta tags" }
+  avatar:
+    light: "#ec4899"
+    dark: "#f472b6"
+    name: { zh: "粉色（数字人）", en: "Avatar (Pink)" }
+    desc: { zh: "数字人情绪、手势指令", en: "Avatar emotion, gesture" }
+  tts:
+    light: "#f97316"
+    dark: "#fb923c"
+    name: { zh: "橙色（语音合成）", en: "TTS (Orange)" }
+    desc: { zh: "SSML 标签、TTS 情绪", en: "SSML tags, TTS emotion" }
+  agent:
+    light: "#7c3aed"
+    dark: "#818cf8"
+    name: { zh: "深紫（Agent）", en: "Agent (Violet)" }
+    desc: { zh: "ReAct 标记、CoT 触发", en: "ReAct markers, CoT triggers" }
+  excel:
+    light: "#059669"
+    dark: "#10b981"
+    name: { zh: "翠绿（Excel AI）", en: "Excel (Emerald)" }
+    desc: { zh: "Copilot 函数、Excel AI", en: "Copilot formulas, Excel AI" }
+  gen3d:
+    light: "#0891b2"
+    dark: "#22d3ee"
+    name: { zh: "青色（3D 生成）", en: "3D Gen (Cyan)" }
+    desc: { zh: "3D 生成平台标识", en: "3D gen platform tags" }
+  comfyui:
+    light: "#0d9488"
+    dark: "#2dd4bf"
+    name: { zh: "青绿（ComfyUI）", en: "ComfyUI (Teal)" }
+    desc: { zh: "ComfyUI 节点调用", en: "ComfyUI node calls" }
+  runway:
+    light: "#6366f1"
+    dark: "#818cf8"
+    name: { zh: "靛蓝（Runway/Pika）", en: "Runway (Indigo)" }
+    desc: { zh: "Runway/Pika 视频参数", en: "Runway/Pika video params" }
+
 # ============================================================
 # 样式规则区 — 每条规则引用颜色令牌名
 # 引用格式：
@@ -212,6 +254,11 @@ styleRules:
     background: "success.soft"
     borderRadius: "4px"
     padding: "0 2px"
+
+  # 中文引号「」『』弱化（v2.4.1 新增，突出引号内台词）
+  dsl-dialogue-quote:
+    color: "paren"
+    opacity: "0.60"
 
   dsl-constraint:
     color: "danger"
@@ -916,3 +963,179 @@ styleRules:
     color: "orange"
   dsl-lexicon-performance:
     color: "pink"
+
+  # ============================================================
+  # 十、AI 多模态扩展样式（v2.4.0 新增）
+  # ============================================================
+  # SSML 语音合成标签
+  dsl-ssml-tag:
+    color: "tts"
+    fontWeight: "bold"
+    background: "tts.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # 歌词段落标签 [Verse] [Chorus]
+  dsl-lyric-section:
+    color: "music"
+    fontWeight: "bold"
+    background: "music.soft"
+    borderRadius: "4px"
+    padding: "0 6px"
+
+  # Suno 风格元标签 [style: pop]
+  dsl-suno-meta:
+    color: "music"
+    fontWeight: "600"
+    background: "music.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 数字人指令标签 [emotion]happy[/emotion]
+  dsl-avatar-directive:
+    color: "avatar"
+    fontWeight: "bold"
+    background: "avatar.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # Excel Copilot 函数 =COPILOT(...)
+  dsl-copilot-formula:
+    color: "excel"
+    fontWeight: "bold"
+    fontFamily: "monospace"
+    background: "excel.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # ReAct Agent 标记 Thought: / Action:
+  dsl-react-marker:
+    color: "agent"
+    fontWeight: "bold"
+    background: "agent.soft"
+    borderRadius: "4px"
+    padding: "0 6px"
+
+  # CoT 触发短语
+  dsl-cot-trigger:
+    color: "agent"
+    fontWeight: "600"
+    fontStyle: "italic"
+    background: "agent.soft"
+    borderRadius: "4px"
+    padding: "0 2px"
+
+  # AI 模型标识符 gpt-4、claude-3
+  dsl-model-identifier:
+    color: "violet"
+    fontWeight: "600"
+    fontFamily: "monospace"
+
+  # ComfyUI 节点调用 KSampler(...)
+  dsl-comfyui-node:
+    color: "comfyui"
+    fontWeight: "bold"
+    fontFamily: "monospace"
+    background: "comfyui.soft"
+    borderRadius: "4px"
+    padding: "0 3px"
+
+  # Pika 视频参数 --camera
+  dsl-pika-parameter:
+    color: "runway"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "runway.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # Runway Gen 参数
+  dsl-runway-parameter:
+    color: "runway"
+    fontWeight: "600"
+    fontFamily: "monospace"
+    background: "runway.soft"
+    borderRadius: "3px"
+    padding: "0 3px"
+
+  # 翻译任务标记 Source: / Target:
+  dsl-translation-marker:
+    color: "purple"
+    fontWeight: "bold"
+
+  # Few-shot 示例标记 Example: / Q:
+  dsl-fewshot-marker:
+    color: "purple"
+    fontWeight: "600"
+    background: "purple.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 3D 生成平台标识 [Meshy] [Hunyuan3D]
+  dsl-gen3d-platform:
+    color: "gen3d"
+    fontWeight: "bold"
+    background: "gen3d.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # v2.4.0 词典扩展样式
+  dsl-lexicon-music-structure:
+    color: "music"
+    fontWeight: "600"
+  dsl-lexicon-avatar-emotion:
+    color: "avatar"
+    fontWeight: "500"
+  dsl-lexicon-avatar-gesture:
+    color: "avatar"
+    fontWeight: "500"
+    fontStyle: "italic"
+  dsl-lexicon-tts-emotion:
+    color: "tts"
+    fontWeight: "500"
+  dsl-lexicon-interior-style:
+    color: "slategray"
+    fontWeight: "500"
+    fontStyle: "italic"
+  dsl-lexicon-logo-style:
+    color: "indigodeep"
+    fontWeight: "500"
+
+  # ============================================================
+  # 十一、中文编程标识逻辑扩展样式（v2.5.0 新增）
+  # ============================================================
+  # 显式标识符（借鉴文言「」包裹机制）
+  dsl-explicit-identifier:
+    color: "purple"
+    fontWeight: "bold"
+    background: "purple.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 显式字符串（借鉴文言双层引号字面量）
+  dsl-explicit-string:
+    color: "success"
+    fontStyle: "italic"
+    background: "success.soft"
+    borderRadius: "4px"
+    padding: "0 4px"
+
+  # 半角括号注释（与全角 parenthetical 视觉一致）
+  dsl-parenthetical-half:
+    color: "paren"
+    fontStyle: "italic"
+    opacity: "0.70"
+
+  # ============================================================
+  # 十一、组合规则样式（v2.5.0 新增）
+  # ============================================================
+  # 镜头动作指令（动宾结构识别）
+  dsl-camera-action:
+    color: "cyan"
+    fontWeight: "600"
+
+  # 情绪标注（并列结构识别）
+  dsl-emotion-parallel:
+    color: "pink"
+    fontStyle: "italic"
+    fontWeight: "500"
