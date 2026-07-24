@@ -1,1 +1,424 @@
-# 占位 - 06-char-lexicon.yaml 内容过大，单独推送
+# ============================================================
+# 06-char-lexicon.yaml
+# 汉字词性词典驱动的组合判断规则（v2.5.0 新增）
+# ------------------------------------------------------------
+# 本文件提供基于汉字词性的组合识别能力：
+#   1. charLexicon: 按词性分类录入汉字，每个字标注 pos 与 category
+#   2. combinationRules: 定义 6 种组合规则（偏正/动宾/量词/约束/并列/标题）
+# 组合规则优先级：
+#   constraint(48) > tech_param(47) > param_key(46)
+#   > chapter_title(45) > camera_action(44) > emotion(43)
+# ============================================================
+
+charLexicon:
+
+  # ============================================================
+  # 形容词类（adj）—— 视觉/空间/速度/质感/程度/温度属性
+  # ============================================================
+  adj:
+    # --- 视觉属性 ---
+    色: { pos: adj, category: visual }
+    明: { pos: adj, category: visual }
+    暗: { pos: adj, category: visual }
+    深: { pos: adj, category: visual }
+    浅: { pos: adj, category: visual }
+    浓: { pos: adj, category: visual }
+    淡: { pos: adj, category: visual }
+    鲜: { pos: adj, category: visual }
+    艳: { pos: adj, category: visual }
+    亮: { pos: adj, category: visual }
+    晦: { pos: adj, category: visual }
+    灿: { pos: adj, category: visual }
+
+    # --- 空间属性 ---
+    长: { pos: adj, category: spatial }
+    短: { pos: adj, category: spatial }
+    高: { pos: adj, category: spatial }
+    低: { pos: adj, category: spatial }
+    大: { pos: adj, category: spatial }
+    小: { pos: adj, category: spatial }
+    宽: { pos: adj, category: spatial }
+    窄: { pos: adj, category: spatial }
+    厚: { pos: adj, category: spatial }
+    薄: { pos: adj, category: spatial }
+    远: { pos: adj, category: spatial }
+    近: { pos: adj, category: spatial }
+    粗: { pos: adj, category: spatial }
+    细: { pos: adj, category: spatial }
+
+    # --- 速度属性 ---
+    快: { pos: adj, category: speed }
+    慢: { pos: adj, category: speed }
+    急: { pos: adj, category: speed }
+    缓: { pos: adj, category: speed }
+    迅: { pos: adj, category: speed }
+    速: { pos: adj, category: speed }
+    迟: { pos: adj, category: speed }
+
+    # --- 质感属性 ---
+    硬: { pos: adj, category: texture }
+    软: { pos: adj, category: texture }
+    滑: { pos: adj, category: texture }
+    糙: { pos: adj, category: texture }
+    韧: { pos: adj, category: texture }
+    脆: { pos: adj, category: texture }
+
+    # --- 程度属性 ---
+    强: { pos: adj, category: degree }
+    弱: { pos: adj, category: degree }
+    重: { pos: adj, category: degree }
+    轻: { pos: adj, category: degree }
+    极: { pos: adj, category: degree }
+    最: { pos: adj, category: degree }
+    颇: { pos: adj, category: degree }
+    稍: { pos: adj, category: degree }
+
+    # --- 温度属性 ---
+    暖: { pos: adj, category: temperature }
+    冷: { pos: adj, category: temperature }
+    热: { pos: adj, category: temperature }
+    凉: { pos: adj, category: temperature }
+    冰: { pos: adj, category: temperature }
+
+  # ============================================================
+  # 动词类（verb）—— 镜头运动/约束指令/动作指令/表演动作
+  # ============================================================
+  verb:
+    # --- 镜头运动 ---
+    推: { pos: verb, category: camera_motion }
+    拉: { pos: verb, category: camera_motion }
+    摇: { pos: verb, category: camera_motion }
+    移: { pos: verb, category: camera_motion }
+    跟: { pos: verb, category: camera_motion }
+    升: { pos: verb, category: camera_motion }
+    降: { pos: verb, category: camera_motion }
+    甩: { pos: verb, category: camera_motion }
+    旋: { pos: verb, category: camera_motion }
+    环: { pos: verb, category: camera_motion }
+    绕: { pos: verb, category: camera_motion }
+    俯: { pos: verb, category: camera_motion }
+    仰: { pos: verb, category: camera_motion }
+
+    # --- 约束指令 ---
+    排: { pos: verb, category: constraint }
+    避: { pos: verb, category: constraint }
+    锁: { pos: verb, category: constraint }
+    定: { pos: verb, category: constraint }
+    禁: { pos: verb, category: constraint }
+    严: { pos: verb, category: constraint }
+    杜: { pos: verb, category: constraint }
+    绝: { pos: verb, category: constraint }
+    切: { pos: verb, category: constraint }
+    勿: { pos: verb, category: constraint }
+    止: { pos: verb, category: constraint }
+    防: { pos: verb, category: constraint }
+    阻: { pos: verb, category: constraint }
+    拒: { pos: verb, category: constraint }
+
+    # --- 动作指令 ---
+    保: { pos: verb, category: action }
+    留: { pos: verb, category: action }
+    显: { pos: verb, category: action }
+    隐: { pos: verb, category: action }
+    换: { pos: verb, category: action }
+    开: { pos: verb, category: action }
+    关: { pos: verb, category: action }
+    启: { pos: verb, category: action }
+    停: { pos: verb, category: action }
+    加: { pos: verb, category: action }
+    减: { pos: verb, category: action }
+    增: { pos: verb, category: action }
+    删: { pos: verb, category: action }
+    改: { pos: verb, category: action }
+
+    # --- 表演动作 ---
+    看: { pos: verb, category: performance }
+    望: { pos: verb, category: performance }
+    盯: { pos: verb, category: performance }
+    瞥: { pos: verb, category: performance }
+    凝: { pos: verb, category: performance }
+    转: { pos: verb, category: performance }
+    回: { pos: verb, category: performance }
+    起: { pos: verb, category: performance }
+    坐: { pos: verb, category: performance }
+    立: { pos: verb, category: performance }
+    行: { pos: verb, category: performance }
+    跑: { pos: verb, category: performance }
+    跳: { pos: verb, category: performance }
+    蹲: { pos: verb, category: performance }
+
+  # ============================================================
+  # 名词类（noun）—— 物理量/视觉对象/场景对象/抽象概念
+  # ============================================================
+  noun:
+    # --- 物理量 ---
+    温: { pos: noun, category: physical }
+    焦: { pos: noun, category: physical }
+    距: { pos: noun, category: physical }
+    度: { pos: noun, category: physical }
+    比: { pos: noun, category: physical }
+    率: { pos: noun, category: physical }
+    量: { pos: noun, category: physical }
+    速: { pos: noun, category: physical }
+    频: { pos: noun, category: physical }
+    压: { pos: noun, category: physical }
+    流: { pos: noun, category: physical }
+    密: { pos: noun, category: physical }
+    浓: { pos: noun, category: physical }
+
+    # --- 视觉对象 ---
+    光: { pos: noun, category: visual_object }
+    影: { pos: noun, category: visual_object }
+    镜: { pos: noun, category: visual_object }
+    头: { pos: noun, category: visual_object }
+    画: { pos: noun, category: visual_object }
+    面: { pos: noun, category: visual_object }
+    形: { pos: noun, category: visual_object }
+    态: { pos: noun, category: visual_object }
+    势: { pos: noun, category: visual_object }
+    色: { pos: noun, category: visual_object }
+    彩: { pos: noun, category: visual_object }
+    调: { pos: noun, category: visual_object }
+    纹: { pos: noun, category: visual_object }
+
+    # --- 场景对象 ---
+    人: { pos: noun, category: scene_object }
+    物: { pos: noun, category: scene_object }
+    景: { pos: noun, category: scene_object }
+    场: { pos: noun, category: scene_object }
+    车: { pos: noun, category: scene_object }
+    房: { pos: noun, category: scene_object }
+    树: { pos: noun, category: scene_object }
+    花: { pos: noun, category: scene_object }
+    水: { pos: noun, category: scene_object }
+    山: { pos: noun, category: scene_object }
+    云: { pos: noun, category: scene_object }
+    风: { pos: noun, category: scene_object }
+    雨: { pos: noun, category: scene_object }
+    雪: { pos: noun, category: scene_object }
+
+    # --- 抽象概念 ---
+    时: { pos: noun, category: abstract }
+    空: { pos: noun, category: abstract }
+    线: { pos: noun, category: abstract }
+    点: { pos: noun, category: abstract }
+    区: { pos: noun, category: abstract }
+    层: { pos: noun, category: abstract }
+    级: { pos: noun, category: abstract }
+    类: { pos: noun, category: abstract }
+    种: { pos: noun, category: abstract }
+    组: { pos: noun, category: abstract }
+    段: { pos: noun, category: abstract }
+    步: { pos: noun, category: abstract }
+    次: { pos: noun, category: abstract }
+    轮: { pos: noun, category: abstract }
+
+  # ============================================================
+  # 量词类（quantifier）—— 时间/影视/章节/频次/数量
+  # ============================================================
+  quantifier:
+    # --- 时间 ---
+    秒: { pos: quantifier, category: time }
+    分: { pos: quantifier, category: time }
+    时: { pos: quantifier, category: time }
+    天: { pos: quantifier, category: time }
+    周: { pos: quantifier, category: time }
+    月: { pos: quantifier, category: time }
+    年: { pos: quantifier, category: time }
+
+    # --- 影视 ---
+    帧: { pos: quantifier, category: film }
+    集: { pos: quantifier, category: film }
+    幕: { pos: quantifier, category: film }
+    场: { pos: quantifier, category: film }
+    镜: { pos: quantifier, category: film }
+    段: { pos: quantifier, category: film }
+
+    # --- 章节 ---
+    章: { pos: quantifier, category: chapter }
+    节: { pos: quantifier, category: chapter }
+    回: { pos: quantifier, category: chapter }
+    课: { pos: quantifier, category: chapter }
+    篇: { pos: quantifier, category: chapter }
+    卷: { pos: quantifier, category: chapter }
+
+    # --- 频次 ---
+    次: { pos: quantifier, category: frequency }
+    遍: { pos: quantifier, category: frequency }
+    轮: { pos: quantifier, category: frequency }
+    回: { pos: quantifier, category: frequency }
+    趟: { pos: quantifier, category: frequency }
+    番: { pos: quantifier, category: frequency }
+
+    # --- 数量 ---
+    个: { pos: quantifier, category: quantity }
+    只: { pos: quantifier, category: quantity }
+    条: { pos: quantifier, category: quantity }
+    件: { pos: quantifier, category: quantity }
+    项: { pos: quantifier, category: quantity }
+    类: { pos: quantifier, category: quantity }
+    种: { pos: quantifier, category: quantity }
+    组: { pos: quantifier, category: quantity }
+    批: { pos: quantifier, category: quantity }
+    堆: { pos: quantifier, category: quantity }
+    束: { pos: quantifier, category: quantity }
+    串: { pos: quantifier, category: quantity }
+
+  # ============================================================
+  # 数词类（number）—— 中文数字/大数/序数
+  # ============================================================
+  number:
+    # --- 中文数字 ---
+    零: { pos: number, category: digit }
+    一: { pos: number, category: digit }
+    二: { pos: number, category: digit }
+    三: { pos: number, category: digit }
+    四: { pos: number, category: digit }
+    五: { pos: number, category: digit }
+    六: { pos: number, category: digit }
+    七: { pos: number, category: digit }
+    八: { pos: number, category: digit }
+    九: { pos: number, category: digit }
+    十: { pos: number, category: digit }
+
+    # --- 阿拉伯数字（v2.5.0 补充，使"3秒"等量词组合可匹配）---
+    "0": { pos: number, category: digit }
+    "1": { pos: number, category: digit }
+    "2": { pos: number, category: digit }
+    "3": { pos: number, category: digit }
+    "4": { pos: number, category: digit }
+    "5": { pos: number, category: digit }
+    "6": { pos: number, category: digit }
+    "7": { pos: number, category: digit }
+    "8": { pos: number, category: digit }
+    "9": { pos: number, category: digit }
+
+    # --- 大数 ---
+    百: { pos: number, category: big }
+    千: { pos: number, category: big }
+    万: { pos: number, category: big }
+    亿: { pos: number, category: big }
+
+    # --- 序数 ---
+    第: { pos: number, category: ordinal }
+    首: { pos: number, category: ordinal }
+    末: { pos: number, category: ordinal }
+    初: { pos: number, category: ordinal }
+    终: { pos: number, category: ordinal }
+
+  # ============================================================
+  # 标点类（punctuation）—— 冒号/逗号/顿号/句号/分号/引号/括号/感叹号/问号/破折号/省略号
+  # 所有标点 key 均用双引号包裹，避免 YAML 特殊字符解析问题
+  # ============================================================
+  punctuation:
+    # --- 冒号 ---
+    ":": { pos: punctuation, category: colon }
+    "：": { pos: punctuation, category: colon }
+    # --- 逗号 ---
+    ",": { pos: punctuation, category: comma }
+    "，": { pos: punctuation, category: comma }
+    # --- 顿号 ---
+    "、": { pos: punctuation, category: enumeration }
+    # --- 句号 ---
+    ".": { pos: punctuation, category: period }
+    "。": { pos: punctuation, category: period }
+    # --- 分号 ---
+    ";": { pos: punctuation, category: semicolon }
+    "；": { pos: punctuation, category: semicolon }
+    # --- 引号 ---
+    "\"": { pos: punctuation, category: quote }
+    "“": { pos: punctuation, category: quote }
+    "”": { pos: punctuation, category: quote }
+    "「": { pos: punctuation, category: quote }
+    "」": { pos: punctuation, category: quote }
+    "『": { pos: punctuation, category: quote }
+    "』": { pos: punctuation, category: quote }
+    # --- 括号 ---
+    "(": { pos: punctuation, category: bracket }
+    ")": { pos: punctuation, category: bracket }
+    "（": { pos: punctuation, category: bracket }
+    "）": { pos: punctuation, category: bracket }
+    # --- 感叹号 ---
+    "!": { pos: punctuation, category: exclamation }
+    "！": { pos: punctuation, category: exclamation }
+    # --- 问号 ---
+    "?": { pos: punctuation, category: question }
+    "？": { pos: punctuation, category: question }
+    # --- 破折号 ---
+    "-": { pos: punctuation, category: dash }
+    "——": { pos: punctuation, category: dash }
+    # --- 省略号 ---
+    "…": { pos: punctuation, category: ellipsis }
+    "...": { pos: punctuation, category: ellipsis }
+
+# ============================================================
+# 组合规则定义（combinationRules）
+# ------------------------------------------------------------
+# 6 种组合规则：偏正/动宾/量词/约束/并列/标题
+# 优先级数值越大越优先匹配（48 > 47 > 46 > 45 > 44 > 43）
+# ============================================================
+combinationRules:
+  # 偏正结构：形容词 + 名词 → 参数键
+  - name: param_key_adj_noun
+    firstCharPos: adj
+    lastCharPos: noun
+    length: { min: 2, max: 4 }
+    followedBy: "[：:]"
+    cssClass: "dsl-param-key"
+    priority: 46
+
+  # 偏正结构（名词修饰名词）：焦距/色温/速度 → 参数键
+  # 与 param_key_adj_noun 同优先级，定义在其后（稳定排序保证 adj 规则先匹配）
+  - name: param_key_noun_noun
+    firstCharPos: noun
+    lastCharPos: noun
+    length: { min: 2, max: 4 }
+    followedBy: "[：:]"
+    cssClass: "dsl-param-key"
+    priority: 46
+
+  # 动宾结构：动词 + 名词 → 动作指令
+  - name: camera_action_verb_noun
+    firstCharPos: verb
+    lastCharPos: noun
+    length: { min: 2, max: 4 }
+    cssClass: "dsl-camera-action"
+    priority: 44
+
+  # 量词结构：数词 + 量词 → 技术参数
+  # 限定首字 category=digit（中文/阿拉伯数字），排除 ordinal（"第"字开头归 chapter_title）
+  # 避免"第一集"被本规则抢占（priority 47 高于 chapter_title 45）
+  - name: tech_param_num_quant
+    firstCharPos: number
+    firstCharCategory: digit
+    lastCharPos: quantifier
+    length: { min: 2, max: 4 }
+    cssClass: "dsl-tech-param"
+    priority: 47
+
+  # 约束结构：约束动词 + 任意 → 约束指令
+  - name: constraint_verb_prefix
+    firstCharPos: verb
+    firstCharCategory: constraint
+    length: { min: 2, max: 6 }
+    cssClass: "dsl-constraint"
+    priority: 48
+
+  # 并列结构：同词性 + 顿号分隔 → 情绪标注
+  - name: emotion_parallel
+    separator: "、"
+    samePosRequired: true
+    length: { min: 2, max: 8 }
+    cssClass: "dsl-emotion-parallel"
+    priority: 43
+
+  # 标题结构：序数标记 + 数词 + 量词 → 章节标题
+  # 首字限定 ordinal（"第"字开头），避免与 tech_param（digit）冲突
+  - name: chapter_title
+    firstCharPos: number
+    firstCharCategory: ordinal
+    midCharPos: number
+    lastCharPos: quantifier
+    length: { min: 3, max: 4 }
+    cssClass: "dsl-cn-chapter"
+    priority: 45
