@@ -214,6 +214,7 @@ contextMap:
       - param_key
       - measurement
       - percentage
+      - param_key_strict
 
   "【参数配置】":
     allowPatterns:
@@ -223,6 +224,7 @@ contextMap:
       - measurement
       - percentage
       - version_number
+      - param_key_strict
 
   "【LoRA配置】":
     allowPatterns:
@@ -230,6 +232,7 @@ contextMap:
       - param_key
       - tech_param
       - sd_parameter
+      - param_key_strict
 
   "【工作流】":
     allowPatterns:
@@ -300,6 +303,253 @@ contextMap:
       - book_title
       - param_key
       - parenthetical
+
+  # ============================================================
+  # 四、AI 多模态扩展区块（v2.4.0 新增）
+  # ============================================================
+  "【语音合成】":
+    allowPatterns:
+      - ssml_tag
+      - param_key
+      - constraint
+      - tech_param
+      - parenthetical
+
+  "【SSML配置】":
+    allowPatterns:
+      - ssml_tag
+      - param_key
+      - constraint
+      - measurement
+      - percentage
+
+  "【数字人】":
+    allowPatterns:
+      - avatar_directive
+      - param_key
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - tech_param
+
+  "【虚拟主播】":
+    allowPatterns:
+      - avatar_directive
+      - param_key
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+
+  "【音乐生成】":
+    allowPatterns:
+      - lyric_section
+      - suno_meta
+      - param_key
+      - constraint
+      - tech_param
+      - parenthetical
+
+  "【歌词创作】":
+    allowPatterns:
+      - lyric_section
+      - suno_meta
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+
+  "【3D建模】":
+    allowPatterns:
+      - gen3d_platform
+      - param_key
+      - constraint
+      - tech_param
+      - measurement
+      - parenthetical
+
+  "【3D生成】":
+    allowPatterns:
+      - gen3d_platform
+      - param_key
+      - constraint
+      - tech_param
+      - parenthetical
+
+  "【数据分析】":
+    allowPatterns:
+      - copilot_formula
+      - param_key
+      - constraint
+      - tech_param
+      - measurement
+      - percentage
+
+  "【Excel AI】":
+    allowPatterns:
+      - copilot_formula
+      - param_key
+      - constraint
+      - measurement
+
+  "【Agent系统】":
+    allowPatterns:
+      - react_marker
+      - cot_trigger
+      - model_identifier
+      - xml_block
+      - function_results_tag
+      - json_schema_key
+      - param_key
+      - constraint
+      - variable
+
+  "【ReAct流程】":
+    allowPatterns:
+      - react_marker
+      - cot_trigger
+      - model_identifier
+      - param_key
+      - constraint
+      - variable
+
+  "【CoT推理】":
+    allowPatterns:
+      - cot_trigger
+      - param_key
+      - constraint
+      - variable
+
+  "【Logo设计】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+      - parenthetical
+      - tech_param
+
+  "【图标设计】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+      - parenthetical
+
+  "【室内设计】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+      - measurement
+      - parenthetical
+      - tech_param
+
+  "【建筑设计】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+      - measurement
+      - parenthetical
+      - tech_param
+
+  "【漫画创作】":
+    allowPatterns:
+      - shot_header
+      - param_key
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - constraint
+      - tech_param
+
+  "【绘本创作】":
+    allowPatterns:
+      - param_key
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - constraint
+
+  "【游戏开发】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - variable
+      - tech_param
+
+  "【NPC对话】":
+    allowPatterns:
+      - dialogue_cn
+      - dialogue_en
+      - param_key
+      - parenthetical
+      - constraint
+      - variable
+
+  "【翻译任务】":
+    allowPatterns:
+      - translation_marker
+      - dialogue_cn
+      - dialogue_en
+      - param_key
+      - constraint
+
+  "【Few-shot示例】":
+    allowPatterns:
+      - fewshot_marker
+      - dialogue_cn
+      - dialogue_en
+      - param_key
+      - parenthetical
+
+  "【模型对比】":
+    allowPatterns:
+      - model_identifier
+      - param_key
+      - constraint
+      - tech_param
+      - percentage
+      - measurement
+
+  "【ComfyUI工作流】":
+    allowPatterns:
+      - comfyui_node
+      - param_key
+      - sd_parameter
+      - tech_param
+      - measurement
+      - constraint
+
+  "【视频生成】":
+    allowPatterns:
+      - pika_parameter
+      - runway_parameter
+      - model_identifier
+      - param_key
+      - tech_param
+      - constraint
+      - parenthetical
+
+  # ============================================================
+  # 五、中文编程标识逻辑扩展区块（v2.5.0 新增）
+  # 支持软关键字上下文识别与显式标识符声明
+  # ============================================================
+  "【约束】":
+    allowPatterns:
+      - constraint_absolute
+      - constraint_soft
+      - constraint
+      - param_key
+      - param_key_strict
+      - parenthetical
+      - parenthetical_strict
 
 # 跨行状态定义（解决多行注释、跨段落资产解析错乱）
 scanStateEnum:

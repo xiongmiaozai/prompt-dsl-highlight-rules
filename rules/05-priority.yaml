@@ -14,6 +14,54 @@ priority:
   # 词典关键词精细化着色（最高层）
   lexicon-keyword: 80
 
+  # ============================================================
+  # v2.5.0 新增 pattern 级别优先级映射（中文编程语言标识逻辑）
+  # ============================================================
+
+  # 显式边界标记（借鉴文言语言「」机制，高于 semantic-context 层确保最优先）
+  explicit_identifier: 65
+  explicit_string: 59
+
+  # 约束关键字分层（借鉴易语言保留字分层）
+  constraint_absolute: 55
+  constraint_soft: 50
+  constraint: 45            # 兜底，从 55 降级
+
+  # 参数键位置消歧（借鉴中蟒语法位置判断）
+  param_key_strict: 46
+  param_key: 40             # 兜底，从 45 降级
+
+  # 台词与括号边界断言（借鉴中文编程语言词边界）
+  dialogue_cn_strict: 52
+  parenthetical_strict: 27
+  parenthetical_half: 26
+
+  # ---- 组合规则优先级（v2.5.0 新增）----
+  # 组合规则层位于 patterns（50+）与兜底（40-）之间
+  # 仅在 patterns/lexicons 匹配失败时触发
+  combination_constraint_verb_prefix: 48
+  combination_tech_param_num_quant: 47
+  combination_param_key_adj_noun: 46
+  combination_param_key_noun_noun: 46
+  combination_chapter_title: 45
+  combination_camera_action_verb_noun: 44
+  combination_emotion_parallel: 43
+
+  # ---- 词组词典优先级（v2.6.0 新增，v2.6.1 扩展）----
+  # 词组分词层位于组合规则之后，作为字级规则的兜底前置层
+  # 优先级与 07-word-lexicon.yaml 中各分组的 priority 字段保持一致
+  word_lexicon_constraint_phrase: 48
+  word_lexicon_tech_param_phrase: 47
+  word_lexicon_param_key_phrase: 46
+  word_lexicon_chapter_title_phrase: 45
+  word_lexicon_camera_action_phrase: 44
+  word_lexicon_emotion_phrase: 43
+  word_lexicon_scene_description_phrase: 42
+  word_lexicon_character_action_phrase: 42
+  word_lexicon_atmosphere_phrase: 41
+  word_lexicon_time_season_phrase: 41
+  word_lexicon_costume_makeup_phrase: 40
+
 # 默认优先级（当 pattern 未指定 priority 时使用）
 defaultPatternPriority: 30
 
