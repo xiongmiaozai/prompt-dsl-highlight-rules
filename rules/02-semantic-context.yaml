@@ -1,0 +1,250 @@
+# 上下文语义体系（高级着色核心）
+# 实现父级区块决定子内容着色逻辑，新增章节无需修改插件
+# 父级区块 -> 子节点生效规则映射
+
+contextMap:
+  # ============================================================
+  # 一、影视分镜类区块
+  # ============================================================
+  "【整体设定】":
+    allowPatterns:
+      - asset_ref
+      - asset_bracket
+      - param_key
+      - constraint
+      - tech_param
+      - audio_ref
+      - audio_tone
+
+  "【分镜设计】":
+    allowPatterns:
+      - shot_header
+      - asset_ref
+      - asset_bracket
+      - param_key
+      - dialogue_cn
+      - dialogue_en
+      - constraint
+      - tech_param
+      - parenthetical
+      - audio_ref
+      - audio_tone
+      - audio_sfx
+
+  "【角色设定】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - asset_ref
+      - asset_bracket
+
+  "【人物设定】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - asset_ref
+
+  "【世界观】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - asset_ref
+      - tech_param
+
+  "【世界设定】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - asset_ref
+      - tech_param
+
+  "【剧情大纲】":
+    allowPatterns:
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+      - shot_header
+
+  "【剧情梗概】":
+    allowPatterns:
+      - constraint
+      - dialogue_cn
+      - dialogue_en
+      - parenthetical
+
+  "【台词脚本】":
+    allowPatterns:
+      - dialogue_cn
+      - dialogue_en
+      - constraint
+      - parenthetical
+      - role_tag
+
+  "【对白设计】":
+    allowPatterns:
+      - dialogue_cn
+      - dialogue_en
+      - constraint
+      - parenthetical
+
+  "【音效设计】":
+    allowPatterns:
+      - audio_ref
+      - audio_tone
+      - audio_sfx
+      - param_key
+      - constraint
+      - tech_param
+
+  "【音频设计】":
+    allowPatterns:
+      - audio_ref
+      - audio_tone
+      - audio_sfx
+      - param_key
+      - constraint
+
+  "【后期调色】":
+    allowPatterns:
+      - tech_param
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+
+  "【色彩方案】":
+    allowPatterns:
+      - tech_param
+      - param_key
+      - constraint
+      - hex_color
+      - css_color_func
+
+  "【镜头清单】":
+    allowPatterns:
+      - shot_header
+      - param_key
+      - tech_param
+      - asset_ref
+      - asset_bracket
+      - constraint
+
+  "【资产清单】":
+    allowPatterns:
+      - asset_ref
+      - asset_bracket
+      - param_key
+      - file_path
+      - url_link
+
+  "【转场设计】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - tech_param
+
+  "【场景设定】":
+    allowPatterns:
+      - param_key
+      - constraint
+      - asset_ref
+      - tech_param
+      - parenthetical
+
+  # ============================================================
+  # 二、AI 提示词工程区块
+  # ============================================================
+  "【系统提示】":
+    allowPatterns:
+      - role_tag
+      - instruction
+      - xml_block
+      - antml_tag
+      - chat_token
+      - llama2_sys
+      - llama3_token
+      - gemma_token
+      - constraint
+      - param_key
+      - variable
+      - jinja_control
+      - json_schema_key
+
+  "【用户输入】":
+    allowPatterns:
+      - variable
+      - param_key
+      - constraint
+      - parenthetical
+
+  "【输出格式】":
+    allowPatterns:
+      - xml_block
+      - json_schema_key
+      - param_key
+      - constraint
+      - jinja_control
+
+  "【示例】":
+    allowPatterns:
+      - role_tag
+      - instruction
+      - xml_block
+      - dialogue_en
+      - dialogue_cn
+      - param_key
+
+  "【负面提示词】":
+    allowPatterns:
+      - sd_negative_header
+      - constraint
+      - param_key
+
+  "【采样参数】":
+    allowPatterns:
+      - tech_param
+      - sd_parameter
+      - param_key
+      - measurement
+      - percentage
+
+  "【参数配置】":
+    allowPatterns:
+      - tech_param
+      - sd_parameter
+      - param_key
+      - measurement
+      - percentage
+      - version_number
+
+  "【LoRA配置】":
+    allowPatterns:
+      - lora_ref
+      - param_key
+      - tech_param
+      - sd_parameter
+
+  "【工作流】":
+    allowPatterns:
+      - workflow_sep
+      - workflow_node
+      - variable
+      - jinja_control
+      - param_key
+      - constraint
+
+# 跨行状态定义（解决多行注释、跨段落资产解析错乱）
+scanStateEnum:
+  Normal: 0
+  InQuoteDialogue: 1
+  InBlockWrapper: 2
+  InCodeFence: 3
+  InMathBlock: 4
+  InComment: 5
