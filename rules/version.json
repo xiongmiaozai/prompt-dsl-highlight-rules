@@ -1,7 +1,6 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "updateTime": "2026-07-24",
-  "hash": "af090fb84a9cae33e6ca15cd57941271b23e0c01",
   "mainBranch": "prompt-dsl",
   "rawBaseUrl": "https://raw.githubusercontent.com/xiongmiaozai/prompt-dsl-highlight-rules/prompt-dsl/rules"
 }
