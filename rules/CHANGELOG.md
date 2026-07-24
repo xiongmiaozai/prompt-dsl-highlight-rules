@@ -2,6 +2,77 @@
 
 本文件记录提示词 DSL 高亮规则库的所有版本变更，遵循 [Keep a Changelog](https://keepachangelog.com/) 简化版格式，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [v2.4.0] - 2026-07-24
+
+### Added
+- `01-base-patterns.yaml` 新增 14 个 AI 多模态扩展 pattern，覆盖语音/音乐/数字人/3D/Agent/翻译等场景：
+  - `ssml_tag` — SSML 语音合成标签（`<prosody>`、`<emphasis>`、`<break>`、`<voice>`、`<say-as>` 等）
+  - `lyric_section` — 歌词段落标签（`[Verse]`、`[Chorus]`、`[Bridge]`、`[Outro]` 等）
+  - `suno_meta` — Suno 风格元标签（`[style: pop]`、`[genre: rock]`、`[mood: happy]` 等）
+  - `avatar_directive` — 数字人/虚拟主播指令（`[emotion]happy[/emotion]`、`[gesture]wave[/gesture]`、`[pause]` 等）
+  - `copilot_formula` — Excel Copilot 函数（`=COPILOT(...)`、`=AI(...)`、`=GPT(...)`、`=CLAUDE(...)` 等）
+  - `react_marker` — ReAct Agent 标记（`Thought:`、`Action:`、`Observation:`、`Final Answer:` 等，块级）
+  - `cot_trigger` — CoT 触发短语（`Let's think step by step`、`让我们一步步思考` 等）
+  - `model_identifier` — AI 模型标识符（`gpt-4`、`claude-3-opus`、`gemini-pro`、`dall-e-3`、`midjourney-v6`、`sora`、`pika`、`hunyuan` 等）
+  - `comfyui_node` — ComfyUI 节点调用（`KSampler(...)`、`CLIPTextEncode(...)`、`VAEDecode(...)` 等）
+  - `pika_parameter` — Pika 视频参数（`--camera pan right`、`--motion 5`、`--fps 24` 等）
+  - `runway_parameter` — Runway Gen 参数（`--prompt`、`--motion_score`、`--safety_check` 等）
+  - `translation_marker` — 翻译任务标记（`Source:`、`Target:`、`原文：`、`译文：` 等，块级）
+  - `fewshot_marker` — Few-shot 示例标记（`Example:`、`示例：`、`Q:`、`A:` 等，块级）
+  - `gen3d_platform` — 3D 生成平台标识（`[Meshy]`、`[Hunyuan3D]`、`[Rodin]`、`[Hyper3D]` 等）
+- `02-semantic-context.yaml` 新增 26 个上下文映射区块：
+  - 语音/音乐：`【语音合成】`、`【SSML配置】`、`【音乐生成】`、`【歌词创作】`
+  - 数字人：`【数字人】`、`【虚拟主播】`
+  - 3D 生成：`【3D建模】`、`【3D生成】`
+  - 数据/Excel：`【数据分析】`、`【Excel AI】`
+  - Agent/推理：`【Agent系统】`、`【ReAct流程】`、`【CoT推理】`
+  - 设计类：`【Logo设计】`、`【图标设计】`、`【室内设计】`、`【建筑设计】`
+  - 创作/游戏：`【漫画创作】`、`【绘本创作】`、`【游戏开发】`、`【NPC对话】`
+  - 通用任务：`【翻译任务】`、`【Few-shot示例】`、`【模型对比】`、`【ComfyUI工作流】`、`【视频生成】`
+- `03-lexicon-optional.yaml` 新增 6 个词典分类：
+  - `music_structure` — 音乐结构术语（Verse、Chorus、Bridge、主歌、副歌、桥段 等）
+  - `avatar_emotion` — 数字人情绪指令（happy、sad、angry、neutral、惊讶、愤怒 等）
+  - `avatar_gesture` — 数字人手势指令（wave、nod、shake、point、挥手、点头 等）
+  - `tts_emotion` — TTS 语音情绪标签（cheerful、sad、angry、excited、friendly、hopeful 等）
+  - `interior_style` — 室内设计风格（现代、北欧、工业、极简、新中式、Art Deco 等）
+  - `logo_style` — Logo 设计风格（极简、扁平、几何、徽章、字标、负空间 等）
+- `03-lexicon-optional.yaml` 的 `cssClassMap` 补全 6 条映射：
+  - `music_structure` → `dsl-lexicon-music-structure`
+  - `avatar_emotion` → `dsl-lexicon-avatar-emotion`
+  - `avatar_gesture` → `dsl-lexicon-avatar-gesture`
+  - `tts_emotion` → `dsl-lexicon-tts-emotion`
+  - `interior_style` → `dsl-lexicon-interior-style`
+  - `logo_style` → `dsl-lexicon-logo-style`
+- `04-theme-color.yaml` 新增 8 个颜色令牌（多模态扩展令牌区）：
+  - `music` — 品红（音乐生成，Suno 歌词段落）
+  - `avatar` — 粉色（数字人情绪/手势指令）
+  - `tts` — 橙色（SSML 标签、TTS 情绪）
+  - `agent` — 深紫（ReAct 标记、CoT 触发）
+  - `excel` — 翠绿（Copilot 函数、Excel AI）
+  - `gen3d` — 青色（3D 生成平台标识）
+  - `comfyui` — 青绿（ComfyUI 节点调用）
+  - `runway` — 靛蓝（Runway/Pika 视频参数）
+- `04-theme-color.yaml` 新增 20 条 styleRules：
+  - 14 条 pattern 样式：`dsl-ssml-tag`、`dsl-lyric-section`、`dsl-suno-meta`、`dsl-avatar-directive`、`dsl-copilot-formula`、`dsl-react-marker`、`dsl-cot-trigger`、`dsl-model-identifier`、`dsl-comfyui-node`、`dsl-pika-parameter`、`dsl-runway-parameter`、`dsl-translation-marker`、`dsl-fewshot-marker`、`dsl-gen3d-platform`
+  - 6 条词典样式：`dsl-lexicon-music-structure`、`dsl-lexicon-avatar-emotion`、`dsl-lexicon-avatar-gesture`、`dsl-lexicon-tts-emotion`、`dsl-lexicon-interior-style`、`dsl-lexicon-logo-style`
+
+### Changed
+- `version.json` 版本号从 `2.3.1` 升级到 `2.4.0`（次版本号变更，新增多模态扩展能力，向后兼容）
+
+### 背景
+本次扩展系统性覆盖了当前主流 AI 多模态提示词场景，包括：
+- **语音合成**（TTS/SSML）：阿里云、Azure、Google TTS、Edge-TTS 等使用 SSML 标签控制语速/音量/情感
+- **音乐生成**（Suno/Udio）：歌词段落标签、风格元标签
+- **数字人/虚拟主播**（HeyGen/D-ID/Synthesia）：情绪、手势、动作指令
+- **3D 建模**（Meshy/Hunyuan3D/Rodin）：平台标识
+- **数据分析/Excel AI**（Copilot）：函数调用
+- **Agent 系统**（ReAct/CoT）：思维链、推理标记
+- **设计类**（Logo/图标/室内/建筑）：风格术语
+- **创作类**（漫画/绘本/游戏）：场景区块
+- **通用任务**（翻译/Few-shot/模型对比/ComfyUI/视频生成）：标记与参数
+
+规则库现已覆盖 17 种视频提示词元素 + 11 种基础元素 + 14 种多模态扩展元素，合计 42 种元素类型，可满足绝大多数 AI 工具与提示词工程场景的高亮需求。
+
 ## [v2.3.1] - 2026-07-24
 
 ### Added
