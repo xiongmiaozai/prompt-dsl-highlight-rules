@@ -47,9 +47,10 @@ priority:
   combination_camera_action_verb_noun: 44
   combination_emotion_parallel: 43
 
-  # ---- 词组词典优先级（v2.6.0 新增，v2.6.1 扩展）----
+  # ---- 词组词典优先级（v2.6.0 新增，v2.6.1 扩展，v2.7.0 拆分+导演知识整合）----
   # 词组分词层位于组合规则之后，作为字级规则的兜底前置层
-  # 优先级与 07-word-lexicon.yaml 中各分组的 priority 字段保持一致
+  # 优先级与 07a-07k 各子文件中分组的 priority 字段保持一致
+  # v2.6.0 基础分组（07a-07f，从原 07-word-lexicon.yaml 拆分）
   word_lexicon_constraint_phrase: 48
   word_lexicon_tech_param_phrase: 47
   word_lexicon_param_key_phrase: 46
@@ -61,6 +62,45 @@ priority:
   word_lexicon_atmosphere_phrase: 41
   word_lexicon_time_season_phrase: 41
   word_lexicon_costume_makeup_phrase: 40
+
+  # v2.7.0 导演必学·摄影与镜头语言（07g-director-cinematography.yaml）
+  word_lexicon_cinematography_basic: 46
+  word_lexicon_shot_size_extended: 44
+  word_lexicon_camera_angle_extended: 44
+  word_lexicon_camera_movement_extended: 44
+  word_lexicon_focal_length_phrase: 47
+  word_lexicon_composition_phrase: 46
+  word_lexicon_depth_of_field_phrase: 47
+
+  # v2.7.0 导演必学·光影与色彩（07h-director-lighting-color.yaml）
+  word_lexicon_lighting_basic: 41
+  word_lexicon_light_quality: 41
+  word_lexicon_light_ratio: 41
+  word_lexicon_color_theory: 46
+  word_lexicon_color_psychology: 42
+  word_lexicon_color_grading_style: 39
+
+  # v2.7.0 导演必学·剪辑与声音（07i-director-editing-sound.yaml）
+  word_lexicon_editing_basic: 39
+  word_lexicon_montage_theory: 39
+  word_lexicon_editing_rhythm: 39
+  word_lexicon_sound_design: 39
+  word_lexicon_music_score: 39
+
+  # v2.7.0 导演必学·表演与剧作（07j-director-performance-screenplay.yaml）
+  word_lexicon_performance_theory: 43
+  word_lexicon_emotion_expression: 43
+  word_lexicon_body_language: 42
+  word_lexicon_screenplay_structure: 39
+  word_lexicon_story_element: 39
+  word_lexicon_dialogue_craft: 39
+
+  # v2.7.0 导演必学·类型/制片/电影史（07k-director-genre-production.yaml）
+  word_lexicon_genre_film: 39
+  word_lexicon_film_movement: 39
+  word_lexicon_production_management: 38
+  word_lexicon_post_production: 39
+  word_lexicon_film_theory: 39
 
 # 默认优先级（当 pattern 未指定 priority 时使用）
 defaultPatternPriority: 30

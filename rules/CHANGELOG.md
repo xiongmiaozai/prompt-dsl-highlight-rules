@@ -2,6 +2,42 @@
 
 本文件记录提示词 DSL 高亮规则库的所有版本变更，遵循 [Keep a Changelog](https://keepachangelog.com/) 简化版格式，版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [v2.7.0] - 2026-07-24
+
+### Added
+- 新增 11 个词库子文件，将原 `07-word-lexicon.yaml`（92 KB / 3741 行 / 40 个分组）按语义拆分为 6 个子文件：
+  - `07a-constraint-tech-phrase.yaml`（约束与技术参数，5 个分组）
+  - `07b-narrative-scene-phrase.yaml`（叙事场景，8 个分组）
+  - `07c-camera-action-phrase.yaml`（镜头运动，1 个分组）
+  - `07d-english-core-phrase.yaml`（英文核心术语，10 个分组）
+  - `07e-english-extended-phrase.yaml`（英文扩展术语，9 个分组）
+  - `07f-english-subject-phrase.yaml`（英文主题术语，7 个分组）
+- 新增 5 个导演必学词库文件（29 个分组，694 个词条），整合导演必学完整知识体系：
+  - `07g-director-cinematography.yaml`（摄影与镜头语言，7 个分组：摄影基础、景别扩展、机位角度、运镜扩展、焦距镜头、构图方法、景深控制）
+  - `07h-director-lighting-color.yaml`（光影与色彩，6 个分组：布光基础、光质光位、光比反差、色彩理论、色彩心理、调色风格）
+  - `07i-director-editing-sound.yaml`（剪辑与声音，5 个分组：剪辑基础、蒙太奇理论、剪辑节奏、声音设计、配乐音乐）
+  - `07j-director-performance-screenplay.yaml`（表演与剧作，6 个分组：表演理论、情绪表达、肢体语言、剧作结构、故事元素、对白技巧）
+  - `07k-director-genre-production.yaml`（类型/制片/电影史，5 个分组：类型片、电影流派、制片管理、后期制作、电影理论）
+- `05-priority.yaml` 追加 29 个导演必学分组的优先级定义（38-47 区间）
+
+### Changed
+- `rule-compiler.ts` 的 `compileRuleSet` 函数改造为多文件合并加载：新增 `loadMergedWordLexicon` 辅助函数，按字母升序遍历所有 `07*.yaml` 文件并合并 `wordLexicon` 分组，同名分组先到先得并输出警告
+- `07-word-lexicon.yaml` 改造为索引文件（仅保留 `segmenterConfig` 与子文件清单注释，3.6 KB）
+- `scripts/sync-builtin-rules.mjs` 的 `RULE_FILES` 数组扩展为 18 个文件（原 7 个 + 07a-07k 共 11 个）
+- `version.json` 版本号从 `2.6.5` 升级到 `2.7.0`（MINOR 升级，新增词库拆分能力 + 导演知识体系整合，向后兼容词条内容）
+
+### Migration
+- **单文件 → 多文件加载**：原 `07-word-lexicon.yaml` 仅从单一文件读取 `wordLexicon` 根节点，现改为从所有 `07*.yaml` 文件合并加载。下游插件无需任何改动（编译后的 `RuleSet` 结构不变，`compileWordLexicon` 函数签名与返回值未改变）
+- **索引文件保留 segmenterConfig**：`07-word-lexicon.yaml` 仍作为索引文件提供分词器配置，`segmenterConfig` 读取逻辑不变
+- **向后兼容**：所有原有 40 个分组的 cssClass、priority、words、followedBy 字段完整保留，仅迁移文件位置
+
+### 背景
+当前 `07-word-lexicon.yaml` 已达 92 KB / 3741 行 / 40 个分组，接近可维护上限。同时，词库偏重 AI 绘图/视频生成的提示词工程，对导演必学的完整知识体系（摄影镜头语言、光影造型、色彩理论、剪辑艺术、声音设计、表演指导、剧作结构、类型片规范、制片管理、电影史与流派）覆盖严重不足。
+
+本次升级基于网络搜索整合了导演必学的完整知识体系（来源包括国家高等教育智慧教育平台《视听语言》课程、中国大学MOOC《电影概论》《剧本创作基础》、搜狗百科《蒙太奇》《类型片》、CSDN《摄影基础知识》《视频创作声音设计全攻略》等公开资源），按五大模块分类整合为 29 个分组、694 个词条。
+
+同时，将原大文件按语义分组拆分为 11 个子文件（07a-07k），每个文件控制在 5-30 KB，解决 IDE 加载卡顿、Git diff 噪声过大、合并冲突频发等问题，让词库可独立维护、可按需加载、可无限扩展。
+
 ## [v2.4.0] - 2026-07-24
 
 ### Added
